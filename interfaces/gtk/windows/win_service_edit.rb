@@ -18,8 +18,6 @@ class WinServiceEdit
 		
 		if (@paras["service"])
 			@gui["txtName"].text = @paras["service"]["name"]
-			
-			
 		else
 			@gui["btnDelete"].hide
 		end
@@ -35,7 +33,7 @@ class WinServiceEdit
 	
 	def update_plugins
 		items = []
-		Dir.new("plugins").each do |file|
+		Dir.new("../../plugins").each do |file|
 			if (file.slice(0, 1) != ".")
 				items << file.slice(31..-4)
 			end
@@ -49,7 +47,7 @@ class WinServiceEdit
 		sel = @gui["cbPlugin"].sel
 		text = sel["text"]
 		
-		object_file = "plugins/class_knjservicechecker_plugin_" + text + ".rb"
+		object_file = "../../plugins/class_knjservicechecker_plugin_" + text + ".rb"
 		object_str = "KnjServiceCheckerPlugin" + ucwords(text)
 		
 		require(object_file)

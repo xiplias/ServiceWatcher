@@ -18,20 +18,20 @@ require("knjrbfw/libknjweb")
 #Database.
 $db = KnjDB.new({
 	"type" => "sqlite3",
-	"path" => "etc/knjservicechecker.sqlite3"
+	"path" => "../../database/knjservicechecker.sqlite3"
 })
 
 
 #Objects.
 $objects = Knj::Objects.new({
 	"db" => $db,
-	"class_path" => "include"
+	"class_path" => "../../include"
 })
 
 
 #Locales.
 include GetText
-bindtextdomain("locales", "locales")
+GetText::bindtextdomain("locales", "locales")
 
 
 WinMain.new
