@@ -29,7 +29,12 @@ class KnjServiceCheckerPluginSsh
 	end
 	
 	def check
-		raise "WTF?"
+		sshrobot = SSHRobot.new(
+			"host" => @paras["txthost"],
+			"port" => @paras["txtport"],
+			"user" => @paras["txtuser"],
+			"passwd" => @paras["txtpasswd"]
+		).getSession
 	end
 	
 	def destroy

@@ -35,6 +35,10 @@ class WinMain
 					"del" => {
 						"text" => _("Delete service"),
 						"connect" => [self, "on_delService_clicked"]
+					},
+					"run" => {
+						"text" => _("Run"),
+						"connect" => [self, "on_runService_clicked"]
 					}
 				}
 			})
@@ -83,6 +87,24 @@ class WinMain
 		$objects.delete(service)
 		
 		update_services
+	end
+	
+	def on_runService_clicked
+		sel = @tv_services.sel
+		if (!sel)
+			msgbox(_("Please select a service and try again."))
+			return nil
+		end
+		
+		service = $objects.get("Service", sel[0])
+		obj = ServiceWatcher::plugin_class(service["plugin"]).new(service.details)
+		
+		begin
+			obj.check
+			msgbox(_("The check was executed with success."))
+		rescue => e
+			msgbox(_("The check returned an error.") + "\n\n" + e.inspect)
+		end
 	end
 	
 	def update_servers
