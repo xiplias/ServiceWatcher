@@ -5,6 +5,21 @@ class KnjServiceCheckerPluginSsh
 				"type" => "text",
 				"title" => _("Port"),
 				"name" => "txtport"
+			},
+			{
+				"type" => "text",
+				"title" => _("Hostname"),
+				"name" => "txthost"
+			},
+			{
+				"type" => "text",
+				"title" => _("Username"),
+				"name" => "txtuser"
+			},
+			{
+				"type" => "password",
+				"title" => _("Password"),
+				"name" => "txtpasswd"
 			}
 		]
 	end
@@ -13,8 +28,8 @@ class KnjServiceCheckerPluginSsh
 		@paras = paras
 	end
 	
-	def check
-		
+	def check(opts)
+		print_r(opts)
 	end
 	
 	def destroy

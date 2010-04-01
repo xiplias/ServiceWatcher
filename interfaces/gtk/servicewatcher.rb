@@ -18,7 +18,7 @@ require("knjrbfw/libknjweb")
 #Database.
 $db = KnjDB.new({
 	"type" => "sqlite3",
-	"path" => "../../database/knjservicechecker.sqlite3"
+	"path" => "../../database/servicewatcher.sqlite3"
 })
 
 

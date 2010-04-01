@@ -52,6 +52,12 @@ class WinMain
 	end
 	
 	def on_editService_clicked
+		if (!@tv_servers.sel)
+			msgbox(_("Please select a server and try again."))
+			return nil
+		end
+		server = $objects.get("Server", @tv_servers.sel[0])
+		
 		sel = @tv_services.sel
 		if (!sel)
 			msgbox(_("Please select a service and try again."))
@@ -59,7 +65,7 @@ class WinMain
 		end
 		
 		service = $objects.get("Service", sel[0])
-		WinServiceEdit.new({"transient_for" => @window, "service" => service, "win_main" => self})
+		WinServiceEdit.new({"transient_for" => @window, "service" => service, "server" => server, "win_main" => self})
 	end
 	
 	def on_delService_clicked

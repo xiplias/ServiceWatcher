@@ -18,11 +18,14 @@ class WinServiceEdit
 		
 		if (@paras["service"])
 			@gui["txtName"].text = @paras["service"]["name"]
+			@gui["cbPlugin"].sel = @paras["service"]["plugin"]
+			
+			@paras["service"].details.each do |key, value|
+				@retd[key]["object"].text = value
+			end
 		else
 			@gui["btnDelete"].hide
 		end
-		
-		
 	end
 	
 	def on_window_destroy
@@ -61,9 +64,14 @@ class WinServiceEdit
 		
 		paras.each do |item|
 			label = Gtk::Label.new(item["title"])
+			label.xalign = 0
 			text = Gtk::Entry.new
 			
-			table.attach(label, 0, 1, top, top + 1, Gtk::SHRINK, Gtk::SHRINK)
+			if (item["type"] == "password")
+				text.visibility = false
+			end
+			
+			table.attach(label, 0, 1, top, top + 1, Gtk::FILL, Gtk::FILL)
 			table.attach(text, 1, 2, top, top + 1, Gtk::EXPAND | Gtk::FILL, Gtk::SHRINK)
 			
 			@retd[item["name"]] = {
@@ -80,7 +88,8 @@ class WinServiceEdit
 	def on_btnSave_clicked
 		save_hash = {
 			"name" => @gui["txtName"].text,
-			"server_id" => @paras["server"]["id"]
+			"server_id" => @paras["server"]["id"],
+			"plugin" => @gui["cbPlugin"].sel["text"]
 		}
 		
 		if (!@paras["service"])
