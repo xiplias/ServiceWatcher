@@ -20,7 +20,6 @@ class Service < KnjDB_row
 		ret = []
 		q_services = $db.query(sql)
 		while(d_services = q_services.fetch)
-			print_r(d_services)
 			ret << $objects.get("Service", d_services)
 		end
 		

@@ -6,33 +6,13 @@ autoload :WinServiceEdit, "windows/win_service_edit"
 autoload :WinMain, "windows/win_main"
 
 #Required files.
+require("../../include/servicewatcher.rb")
 require("gtk2")
-require("knjrbfw/libautoconnect")
 require("knjrbfw/libknjgtk")
 require("knjrbfw/libknjgtk_tv")
 require("knjrbfw/libknjgtk_cb")
 require("knjrbfw/libknjphpfuncs")
 require("knjrbfw/libknjweb")
-
-
-#Database.
-$db = KnjDB.new({
-	"type" => "sqlite3",
-	"path" => "../../database/servicewatcher.sqlite3"
-})
-
-
-#Objects.
-$objects = Knj::Objects.new({
-	"db" => $db,
-	"class_path" => "../../include"
-})
-
-
-#Locales.
-include GetText
-GetText::bindtextdomain("locales", "locales")
-
 
 WinMain.new
 Gtk::main
