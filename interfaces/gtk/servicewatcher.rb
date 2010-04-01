@@ -6,7 +6,7 @@ autoload :WinServiceEdit, "windows/win_service_edit"
 autoload :WinMain, "windows/win_main"
 
 #Required files.
-require("../../include/servicewatcher.rb")
+require("../../include/servicewatcher")
 require("gtk2")
 require("knjrbfw/libknjgtk")
 require("knjrbfw/libknjgtk_tv")
