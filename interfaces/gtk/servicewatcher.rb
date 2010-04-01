@@ -4,6 +4,7 @@ Dir.chdir(File.dirname(__FILE__))
 
 autoload :WinServiceEdit, "windows/win_service_edit"
 autoload :WinMain, "windows/win_main"
+autoload :WinServiceReporterEdit, "windows/win_service_reporter_edit"
 
 #Required files.
 require("../../include/servicewatcher.rb")

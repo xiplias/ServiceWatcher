@@ -22,7 +22,7 @@ class WinMain
 	
 	def on_tvServices_button_press_event(widget, event)
 		if (event.button == 3)
-			KnjGtkMenu.new({
+			KnjGtkMenu.new(
 				"items" => {
 					"add" => {
 						"text" => _("Add new"),
@@ -41,7 +41,7 @@ class WinMain
 						"connect" => [self, "on_runService_clicked"]
 					}
 				}
-			})
+			)
 		end
 	end
 	

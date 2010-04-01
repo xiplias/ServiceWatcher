@@ -1,5 +1,5 @@
 class WinServiceEdit
-	def initialize(paras)
+	def initialize(paras = {})
 		@paras = paras
 		
 		@gui = Gtk::Builder.new
@@ -7,13 +7,16 @@ class WinServiceEdit
 		@gui.connect_signals(){|h|method(h)}
 		@gui.translate
 		
+		@tv_reporters = @gui["tvReporters"]
+		@tv_reporters.init([_("ID"), _("Title"), _("Value")])
+		@tv_reporters.columns[0].visible = false
+		
 		@window = @gui["window"]
 		
 		if (@paras["transient_for"])
 			@window.transient_for = @paras["transient_for"]
 		end
 		
-		@window.show_all
 		update_plugins
 		
 		if (@paras["service"])
@@ -26,6 +29,8 @@ class WinServiceEdit
 		else
 			@gui["btnDelete"].hide
 		end
+		
+		@window.show_all
 	end
 	
 	def on_window_destroy
@@ -118,5 +123,52 @@ class WinServiceEdit
 		
 		$objects.delete(@paras["service"])
 		@window.destroy
+	end
+	
+	def on_tvReporters_button_press_event(widget, event)
+		if (event.button == 3)
+			KnjGtkMenu.new(
+				"items" => {
+					"add" => {
+						"text" => _("Add new"),
+						"connect" => [self, "on_addReporter_clicked"]
+					},
+					"edit" => {
+						"text" => _("Edit reporter"),
+						"connect" => [self, "on_editReporter_clicked"]
+					},
+					"del" => {
+						"text" => _("Delete reporter"),
+						"connect" => [self, "on_delReporter_clicked"]
+					}
+				}
+			)
+		end
+	end
+	
+	def on_addReporter_clicked
+		WinServiceReporterEdit.new({"transient_for" => @gui["window"]})
+	end
+	
+	def on_editReporter_clicked
+		reporter = @tv_reporters.sel
+		if (!reporter)
+			msgbox(_("Please select a reporter and try again."))
+			return nil
+		end
+		
+		WinServiceReporterEdit.new
+	end
+	
+	def on_delReporter_clicked
+		reporter = @tv_reporters.sel
+		if (!reporter)
+			msgbox(_("Please select a reporter and try again."))
+			return nil
+		end
+		
+		if (msgbox(_("Do you want to delete this reporter?"), "yesno") != "yes")
+			return nil
+		end
 	end
 end
