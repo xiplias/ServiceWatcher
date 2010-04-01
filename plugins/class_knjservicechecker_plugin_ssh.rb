@@ -28,8 +28,8 @@ class KnjServiceCheckerPluginSsh
 		@paras = paras
 	end
 	
-	def check(opts)
-		print_r(opts)
+	def check
+		raise "WTF?"
 	end
 	
 	def destroy
