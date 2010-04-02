@@ -13,11 +13,14 @@ class WinServiceReporterEdit
 		
 		update_plugins
 		
-		@gui["window"].show_all
-		
 		if (@paras["reporter"])
-			
+			@gui["cbReporters"].sel = @paras["reporter"]["plugin"]
+			@paras["reporter"].details.each do |key, value|
+				@form["objects"][key]["object"].text = value
+			end
 		end
+		
+		@gui["window"].show_all
 	end
 	
 	def on_window_destroy
@@ -38,14 +41,48 @@ class WinServiceReporterEdit
 	end
 	
 	def on_cbReporters_changed
+		sel = @gui["cbReporters"].sel
+		text = sel["text"]
 		
+		paras = Kernel.const_get("ServiceWatcherReporter" + ucwords(text)).paras
+		
+		if (@form)
+			@gui["vboxPluginDetails"].remove(@form["table"])
+			@form["table"].destroy
+		end
+		
+		@form = Knj::Gtk2::form(paras)
+		@gui["vboxPluginDetails"].pack_start(@form["table"])
+		@gui["vboxPluginDetails"].show_all
 	end
 	
 	def on_btnSave_clicked
+		sel = @gui["cbReporters"].sel
+		save_hash = {
+			"service_id" => @paras["service"]["id"],
+			"plugin" => sel["text"]
+		}
 		
+		if (@paras["reporter"])
+			@paras["reporter"].update(save_hash)
+			reporter = @paras["reporter"]
+		else
+			reporter = $objects.add("Reporter", save_hash)
+		end
+		
+		reporter.del_details
+		@form["objects"].each do |key, objhash|
+			reporter.add_detail(key, objhash["object"].text)
+		end
+		
+		if (@paras["win_service_edit"])
+			@paras["win_service_edit"].update_reporters
+		end
+		
+		@gui["window"].destroy
 	end
 	
 	def on_btnCancel_clicked
-		
+		@gui["window"].destroy
 	end
 end

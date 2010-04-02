@@ -7,10 +7,6 @@ class WinServiceEdit
 		@gui.connect_signals(){|h|method(h)}
 		@gui.translate
 		
-		@tv_reporters = @gui["tvReporters"]
-		@tv_reporters.init([_("ID"), _("Title"), _("Value")])
-		@tv_reporters.columns[0].visible = false
-		
 		@window = @gui["window"]
 		
 		if (@paras["transient_for"])
@@ -24,13 +20,22 @@ class WinServiceEdit
 			@gui["cbPlugin"].sel = @paras["service"]["plugin"]
 			
 			@paras["service"].details.each do |key, value|
-				@retd[key]["object"].text = value
+				@form["objects"][key]["object"].text = value
 			end
-		else
-			@gui["btnDelete"].hide
+			
+			@tv_reporters = @gui["tvReporters"]
+			@tv_reporters.init([_("ID"), _("Title"), _("Value")])
+			@tv_reporters.columns[0].visible = false
+			
+			update_reporters
 		end
 		
 		@window.show_all
+		
+		if (!@paras["service"])
+			@gui["btnDelete"].hide
+			@gui["frameReporters"].hide
+		end
 	end
 	
 	def on_window_destroy
@@ -51,43 +56,28 @@ class WinServiceEdit
 		@gui["cbPlugin"].active = 0
 	end
 	
+	def update_reporters
+		@tv_reporters.model.clear
+		
+		@paras["service"].reporters.each do |reporter|
+			@tv_reporters.append([reporter["id"], reporter["plugin"], reporter["plugin"]])
+		end
+	end
+	
 	def on_cbPlugin_changed
 		sel = @gui["cbPlugin"].sel
 		text = sel["text"]
 		
-		object_file = "../../plugins/class_knjservicechecker_plugin_" + text + ".rb"
-		object_str = "KnjServiceCheckerPlugin" + ucwords(text)
+		paras = Kernel.const_get("KnjServiceCheckerPlugin" + ucwords(text)).paras
 		
-		require(object_file)
-		paras = Kernel.const_get(object_str).paras
-		
-		table = Gtk::Table.new(paras.length, 2)
-		table.row_spacings = 4
-		table.column_spacings = 4
-		top = 0
-		@retd = {}
-		
-		paras.each do |item|
-			label = Gtk::Label.new(item["title"])
-			label.xalign = 0
-			text = Gtk::Entry.new
-			
-			if (item["type"] == "password")
-				text.visibility = false
-			end
-			
-			table.attach(label, 0, 1, top, top + 1, Gtk::FILL, Gtk::FILL)
-			table.attach(text, 1, 2, top, top + 1, Gtk::EXPAND | Gtk::FILL, Gtk::SHRINK)
-			
-			@retd[item["name"]] = {
-				"type" => "text",
-				"object" => text
-			}
-			top += 1
+		if (@form)
+			@gui["boxPluginDetails"].remove(@form["table"])
+			@form["table"].destroy
 		end
 		
-		@gui["boxPluginDetails"].add(table)
-		table.show_all
+		@form = Knj::Gtk2::form(paras)
+		@gui["boxPluginDetails"].add(@form["table"])
+		@form["table"].show_all
 	end
 	
 	def on_btnSave_clicked
@@ -105,7 +95,7 @@ class WinServiceEdit
 		end
 		
 		service.del_details
-		@retd.each do |name, datahash|
+		@form["objects"].each do |name, datahash|
 			service.add_detail(name, datahash["object"].text)
 		end
 		
@@ -147,17 +137,18 @@ class WinServiceEdit
 	end
 	
 	def on_addReporter_clicked
-		WinServiceReporterEdit.new({"transient_for" => @gui["window"]})
+		WinServiceReporterEdit.new("transient_for" => @gui["window"], "service" => @paras["service"], "win_service_edit" => self)
 	end
 	
 	def on_editReporter_clicked
-		reporter = @tv_reporters.sel
-		if (!reporter)
+		reporter_sel = @tv_reporters.sel
+		if (!reporter_sel)
 			msgbox(_("Please select a reporter and try again."))
 			return nil
 		end
 		
-		WinServiceReporterEdit.new
+		reporter = $objects.get("Reporter", reporter_sel[0])
+		WinServiceReporterEdit.new("transient_for" => @gui["window"], "service" => @paras["service"], "reporter" => reporter, "win_service_edit" => self)
 	end
 	
 	def on_delReporter_clicked

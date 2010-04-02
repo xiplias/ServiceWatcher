@@ -1,6 +1,6 @@
 class Server < KnjDB_row
 	def initialize(data)
-		super({"db" => $db, "table" => "servers", "data" => data, "col_title" => "name"})
+		super("db" => $db, "table" => "servers", "data" => data, "col_title" => "name")
 	end
 	
 	def self.add(data)

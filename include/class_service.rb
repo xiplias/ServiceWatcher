@@ -52,4 +52,14 @@ class Service < KnjDB_row
 		
 		return data
 	end
+	
+	def reporters
+		ret = []
+		q_reporters = $db.select("reporters", {"service_id" => self["id"]})
+		while(d_reporters = q_reporters.fetch)
+			ret << $objects.get("Reporter", d_reporters)
+		end
+		
+		return ret
+	end
 end
