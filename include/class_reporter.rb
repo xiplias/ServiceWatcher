@@ -30,4 +30,9 @@ class Reporter < KnjDB_row
 	def add_detail(name, value)
 		$db.insert("reporters_options", {"reporter_id" => self["id"], "opt_name" => name, "opt_value" => value})
 	end
+	
+	def reporter_plugin
+		obj_name = "ServiceWatcherReporter" + ucwords(self["plugin"])
+		return Kernel.const_get(obj_name).new(self.details)
+	end
 end

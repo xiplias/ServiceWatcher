@@ -152,8 +152,8 @@ class WinServiceEdit
 	end
 	
 	def on_delReporter_clicked
-		reporter = @tv_reporters.sel
-		if (!reporter)
+		reporter_sel = @tv_reporters.sel
+		if (!reporter_sel)
 			msgbox(_("Please select a reporter and try again."))
 			return nil
 		end
@@ -161,5 +161,10 @@ class WinServiceEdit
 		if (msgbox(_("Do you want to delete this reporter?"), "yesno") != "yes")
 			return nil
 		end
+		
+		reporter = $objects.get("Reporter", reporter_sel[0])
+		reporter.delete
+		
+		update_reporters
 	end
 end

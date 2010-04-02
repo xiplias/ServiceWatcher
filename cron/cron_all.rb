@@ -5,5 +5,5 @@ require("../include/servicewatcher.rb")
 
 $objects.list("Service").each do |service|
 	obj = ServiceWatcher.plugin_class(service["plugin"]).new(service.details)
-	obj.check
+	ServiceWatcher.check_and_report("plugin" => obj, "service" => service)
 end
