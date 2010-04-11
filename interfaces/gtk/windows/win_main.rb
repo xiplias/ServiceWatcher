@@ -99,11 +99,12 @@ class WinMain
 		service = $objects.get("Service", sel[0])
 		obj = ServiceWatcher::plugin_class(service["plugin"]).new(service.details)
 		
-		begin
-			obj.check
+		result = ServiceWatcher::check_and_report("plugin" => obj, "service" => service)
+		
+		if (!result["errorstatus"])
 			msgbox(_("The check was executed with success."))
-		rescue => e
-			msgbox(_("The check returned an error.") + "\n\n" + e.inspect)
+		else
+			msgbox(_("The check returned an error.") + "\n\n" + result["error"].inspect)
 		end
 	end
 	

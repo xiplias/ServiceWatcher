@@ -20,7 +20,11 @@ class WinServiceEdit
 			@gui["cbPlugin"].sel = @paras["service"]["plugin"]
 			
 			@paras["service"].details.each do |key, value|
-				@form["objects"][key]["object"].text = value
+				if (!@form["objects"][key])
+					msgbox("Could not find: " + key)
+				else
+					Knj::Gtk2::form_setval(@form["objects"][key]["object"], value)
+				end
 			end
 			
 			@tv_reporters = @gui["tvReporters"]
@@ -96,7 +100,7 @@ class WinServiceEdit
 		
 		service.del_details
 		@form["objects"].each do |name, datahash|
-			service.add_detail(name, datahash["object"].text)
+			service.add_detail(name, Knj::Gtk2::form_getval(datahash["object"]))
 		end
 		
 		if (@paras["win_main"])

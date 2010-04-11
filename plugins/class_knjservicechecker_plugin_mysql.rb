@@ -1,11 +1,6 @@
-class KnjServiceCheckerPluginSsh
+class KnjServiceCheckerPluginMysql
 	def self.paras
 		return [
-			{
-				"type" => "text",
-				"title" => _("Port"),
-				"name" => "txtport"
-			},
 			{
 				"type" => "text",
 				"title" => _("Hostname"),
@@ -20,6 +15,11 @@ class KnjServiceCheckerPluginSsh
 				"type" => "password",
 				"title" => _("Password"),
 				"name" => "txtpasswd"
+			},
+			{
+				"type" => "text",
+				"title" => _("Database"),
+				"name" => "txtdb"
 			}
 		]
 	end
@@ -30,14 +30,9 @@ class KnjServiceCheckerPluginSsh
 	
 	def check
 		begin
-			sshrobot = SSHRobot.new(
-				"host" => @paras["txthost"],
-				"port" => @paras["txtport"],
-				"user" => @paras["txtuser"],
-				"passwd" => @paras["txtpasswd"]
-			).getSession
+			conn = Mysql.real_connect(@paras["txthost"], @paras["txtuser"], @paras["txtpasswd"], @paras["txtdb"])
 		rescue => e
-			raise "SSH connection failed for #{@paras["txtuser"]}@#{@paras["txthost"]}:#{@paras["txtport"]}!"
+			raise "MySQL connection failed for #{@paras["txtuser"]}@#{@paras["txthost"]}:#{@paras["txtdb"]}! - " + e.inspect
 		end
 	end
 	

@@ -15,8 +15,13 @@ class WinServiceReporterEdit
 		
 		if (@paras["reporter"])
 			@gui["cbReporters"].sel = @paras["reporter"]["plugin"]
+			
 			@paras["reporter"].details.each do |key, value|
-				@form["objects"][key]["object"].text = value
+				if (!@form["objects"][key])
+					msgbox("Could not find: " + key)
+				else
+					Knj::Gtk2::form_setval(@form["objects"][key]["object"], value)
+				end
 			end
 		end
 		
@@ -72,7 +77,7 @@ class WinServiceReporterEdit
 		
 		reporter.del_details
 		@form["objects"].each do |key, objhash|
-			reporter.add_detail(key, objhash["object"].text)
+			reporter.add_detail(key, Knj::Gtk2::form_getval(objhash["object"]))
 		end
 		
 		if (@paras["win_service_edit"])

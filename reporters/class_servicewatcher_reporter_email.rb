@@ -19,9 +19,14 @@ class ServiceWatcherReporterEmail
 				"title" => _("SMTP user")
 			},
 			{
-				"type" => "text",
+				"type" => "password",
 				"name" => "txtsmtppasswd",
 				"title" => _("SMTP password")
+			},
+			{
+				"type" => "text",
+				"name" => "txtsmtpdomain",
+				"title" => _("SMTP Domain")
 			},
 			{
 				"type" => "text",
@@ -37,6 +42,11 @@ class ServiceWatcherReporterEmail
 				"type" => "text",
 				"name" => "txtsubject",
 				"title" => _("Subject")
+			},
+			{
+				"type" => "check",
+				"name" => "chessl",
+				"title" => "SSL"
 			}
 		]
 	end
@@ -46,15 +56,29 @@ class ServiceWatcherReporterEmail
 	end
 	
 	def report_error(error_hash)
+		require "knjrbfw/libknjweb"
+		
 		details = error_hash["reporter"].details
 		
-		html = _("An error occurred") + "\n\n" + error_hash["error"].inspect
+		html = _("An error occurred") + "\n\n" + error_hash["error"].inspect.to_s.html
+		
+		if (details["chessl"] == "1")
+			ssl = true
+		else
+			ssl = false
+		end
 		
 		mail = Knj::Mail.new(
 			"from" => details["txtfromaddress"],
 			"subject" => details["txtsubject"],
 			"to" => details["txtaddress"],
-			"html" => html
+			"html" => html,
+			"ssl" => ssl,
+			"smtp_host" => details["txtsmtphost"],
+			"smtp_port" => details["txtsmtpport"].to_i,
+			"smtp_user" => details["txtsmtpuser"],
+			"smtp_passwd" => details["txtsmtppasswd"],
+			"smtp_domain" => details["txtsmtpdomain"]
 		)
 		mail.send
 		
