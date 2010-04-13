@@ -1,4 +1,4 @@
-class Reporter < KnjDB_row
+class Reporter < Knj::Db_row
 	def initialize(data)
 		super("db" => $db, "table" => "reporters", "data" => data, "col_title" => "plugin")
 	end

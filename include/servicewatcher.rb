@@ -23,7 +23,7 @@ require("knjrbfw/libautoconnect")
 autoload :ServiceWatcher, File.dirname(__FILE__) + "/class_servicewatcher"
 
 #Database.
-$db = KnjDB.new(
+$db = Knj::Db.new(
 	"type" => "sqlite3",
 	"path" => File.dirname(__FILE__) + "/../database/servicewatcher.sqlite3"
 )

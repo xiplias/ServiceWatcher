@@ -1,4 +1,4 @@
-class Service < KnjDB_row
+class Service < Knj::Db_row
 	def initialize(data)
 		super({"db" => $db, "table" => "services", "data" => data, "col_title" => "name"})
 	end

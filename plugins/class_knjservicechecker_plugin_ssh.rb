@@ -30,7 +30,7 @@ class KnjServiceCheckerPluginSsh
 	
 	def check
 		begin
-			sshrobot = SSHRobot.new(
+			sshrobot = Knj::SSHRobot.new(
 				"host" => @paras["txthost"],
 				"port" => @paras["txtport"],
 				"user" => @paras["txtuser"],
