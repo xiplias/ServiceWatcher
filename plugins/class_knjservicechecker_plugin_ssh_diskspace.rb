@@ -39,7 +39,7 @@ class KnjServiceCheckerPluginSsh_diskspace
 	end
 	
 	def check
-		sshrobot = SSHRobot.new(
+		sshrobot = Knj::SSHRobot.new(
 			"host" => @paras["txthost"],
 			"port" => @paras["txtport"].to_i,
 			"user" => @paras["txtuser"],
