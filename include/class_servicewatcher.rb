@@ -5,13 +5,13 @@ class ServiceWatcher
 	end
 	
 	def self.check_and_report(paras)
-		#begin
+		begin
 			paras["plugin"].check
 			
 			return {
 				"errorstatus" => false
 			}
-		begin;rescue => e
+		rescue => e
 			paras["service"].reporters.each do |reporter|
 				reporter.reporter_plugin.report_error("reporter" => reporter, "error" => e, "plugin" => paras["plugin"], "service" => paras["service"])
 			end

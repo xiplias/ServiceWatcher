@@ -29,7 +29,7 @@ class KnjServiceCheckerPluginSsh
 	end
 	
 	def check
-		#begin
+		begin
 			
 			sshrobot = Knj::SSHRobot.new(
 				"host" => @paras["txthost"],
@@ -37,9 +37,9 @@ class KnjServiceCheckerPluginSsh
 				"user" => @paras["txtuser"],
 				"passwd" => @paras["txtpasswd"]
 			).getSession
-		#rescue => e
-		#	raise "SSH connection failed for #{@paras["txtuser"]}@#{@paras["txthost"]}:#{@paras["txtport"]}!"
-		#end
+		rescue => e
+			raise "SSH connection failed for #{@paras["txtuser"]}@#{@paras["txthost"]}:#{@paras["txtport"]}!"
+		end
 	end
 	
 	def destroy
