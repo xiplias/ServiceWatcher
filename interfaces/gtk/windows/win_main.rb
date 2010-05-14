@@ -104,6 +104,9 @@ class WinMain
 		if (!result["errorstatus"])
 			msgbox(_("The check was executed with success."))
 		else
+			puts obj["error"].inspect
+			puts obj["error"].backtrace + "\n"
+			
 			msgbox(_("The check returned an error.") + "\n\n" + result["error"].inspect)
 		end
 	end

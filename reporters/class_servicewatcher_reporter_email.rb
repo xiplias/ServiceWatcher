@@ -56,7 +56,7 @@ class ServiceWatcherReporterEmail
 	end
 	
 	def report_error(error_hash)
-		require "knjrbfw/libknjweb"
+		require "knj/web"
 		
 		details = error_hash["reporter"].details
 		

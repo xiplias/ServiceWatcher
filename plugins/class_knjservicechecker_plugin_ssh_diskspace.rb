@@ -47,7 +47,7 @@ class KnjServiceCheckerPluginSsh_diskspace
 		)
 		sshrobot.getSession
 		
-		if (!is_numeric(@paras["txtwarnperc"]))
+		if (!Php::is_numeric(@paras["txtwarnperc"]))
 			raise "Warning percent is not numeric - please enter it correctly as number only."
 		end
 		
@@ -56,7 +56,7 @@ class KnjServiceCheckerPluginSsh_diskspace
 		
 		match = output.match(/([0-9]+)%/)
 		
-		if (!match or !match[1] or !is_numeric(match[1]))
+		if (!match or !match[1] or !Php::is_numeric(match[1]))
 			raise _("Error in result from the server.")
 		end
 		
