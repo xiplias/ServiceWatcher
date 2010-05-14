@@ -8,12 +8,11 @@ autoload :WinServiceReporterEdit, "windows/win_service_reporter_edit"
 
 #Required files.
 require("../../include/servicewatcher.rb")
-require("gtk2")
-require("knjrbfw/libknjgtk")
-require("knjrbfw/libknjgtk_tv")
-require("knjrbfw/libknjgtk_cb")
-require("knjrbfw/libknjphpfuncs")
-require("knjrbfw/libknjweb")
+include Gtk2
+
+require("knj/gtk2_tv")
+require("knj/gtk2_cb")
+require("knj/web")
 
 WinMain.new
 Gtk::main

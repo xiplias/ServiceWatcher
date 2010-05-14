@@ -22,7 +22,7 @@ class WinMain
 	
 	def on_tvServices_button_press_event(widget, event)
 		if (event.button == 3)
-			KnjGtkMenu.new(
+			Gtk2::Menu.new(
 				"items" => {
 					"add" => {
 						"text" => _("Add new"),

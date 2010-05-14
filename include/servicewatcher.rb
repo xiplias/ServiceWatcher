@@ -1,4 +1,4 @@
-#Some Mac-users have problems (xiplias included). This safes them from complete crash and following horrors - knj.
+#Some Mac-users have problems (Xiplias included). This safes them from a complete crash and following horrors - knj.
 begin
 	require "gettext"
 rescue LoadError
@@ -19,7 +19,10 @@ rescue LoadError
 	end
 end
 
-require("knjrbfw/libautoconnect")
+require("knj/autoload")
+include Knj
+include Php
+
 autoload :ServiceWatcher, File.dirname(__FILE__) + "/class_servicewatcher"
 
 #Database.
