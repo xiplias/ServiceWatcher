@@ -8,6 +8,18 @@ class Reporter < Knj::Db_row
 		return $objects.get("Reporter", $db.last_id)
 	end
 	
+	def self.list(paras = {})
+		sql = "SELECT * FROM reporters WHERE 1=1 ORDER BY id"
+		
+		ret = []
+		q_reps = $db.query(sql)
+		while d_reps = q_reps.fetch
+			ret << $objects.get("Reporter", d_reps)
+		end
+		
+		return ret
+	end
+	
 	def delete
 		self.del_details
 		$db.delete("reporters", {"id" => self["id"]})
@@ -32,7 +44,7 @@ class Reporter < Knj::Db_row
 	end
 	
 	def reporter_plugin
-		obj_name = "ServiceWatcherReporter" + ucwords(self["plugin"])
+		obj_name = "ServiceWatcherReporter" + Php::ucwords(self["plugin"])
 		return Kernel.const_get(obj_name).new(self.details)
 	end
 end

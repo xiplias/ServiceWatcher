@@ -23,7 +23,7 @@ class WinServiceEdit
 				if (!@form["objects"][key])
 					msgbox("Could not find: " + key)
 				else
-					Knj::Gtk2::form_setval(@form["objects"][key]["object"], value)
+					Gtk2::form_setval(@form["objects"][key]["object"], value)
 				end
 			end
 			
@@ -72,14 +72,14 @@ class WinServiceEdit
 		sel = @gui["cbPlugin"].sel
 		text = sel["text"]
 		
-		paras = Kernel.const_get("KnjServiceCheckerPlugin" + ucwords(text)).paras
+		paras = Kernel.const_get("KnjServiceCheckerPlugin" + Php::ucwords(text)).paras
 		
 		if (@form)
 			@gui["boxPluginDetails"].remove(@form["table"])
 			@form["table"].destroy
 		end
 		
-		@form = Knj::Gtk2::form(paras)
+		@form = Gtk2::form(paras)
 		@gui["boxPluginDetails"].add(@form["table"])
 		@form["table"].show_all
 	end
@@ -87,7 +87,7 @@ class WinServiceEdit
 	def on_btnSave_clicked
 		save_hash = {
 			"name" => @gui["txtName"].text,
-			"server_id" => @paras["server"]["id"],
+			"group_id" => @paras["group"]["id"],
 			"plugin" => @gui["cbPlugin"].sel["text"]
 		}
 		
@@ -100,7 +100,7 @@ class WinServiceEdit
 		
 		service.del_details
 		@form["objects"].each do |name, datahash|
-			service.add_detail(name, Knj::Gtk2::form_getval(datahash["object"]))
+			service.add_detail(name, Gtk2::form_getval(datahash["object"]))
 		end
 		
 		if (@paras["win_main"])
@@ -121,7 +121,7 @@ class WinServiceEdit
 	
 	def on_tvReporters_button_press_event(widget, event)
 		if (event.button == 3)
-			KnjGtkMenu.new(
+			Gtk2::Menu.new(
 				"items" => {
 					"add" => {
 						"text" => _("Add new"),
@@ -167,7 +167,7 @@ class WinServiceEdit
 		end
 		
 		reporter = $objects.get("Reporter", reporter_sel[0])
-		reporter.delete
+		$objects.delete(reporter)
 		
 		update_reporters
 	end

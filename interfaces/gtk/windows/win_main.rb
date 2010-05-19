@@ -5,22 +5,28 @@ class WinMain
 		@gui.connect_signals(){|h|method(h)}
 		@gui.translate
 		
-		@tv_servers = @gui["tvServers"]
-		@tv_servers.init([_("ID"), _("Title")])
-		@tv_servers.columns[0].visible = false
-		@tv_servers.selection.signal_connect("changed"){on_tvServers_changed}
+		@tv_groups = @gui["tvGroups"]
+		@tv_groups.init([_("ID"), _("Title")])
+		@tv_groups.columns[0].visible = false
+		@tv_groups.selection.signal_connect("changed"){on_tvGroups_changed}
 		
-		@tv_services = @gui["tvServices"]
+		@tv_services = @gui["tvGroupServices"]
 		@tv_services.init([_("ID"), _("Name")])
 		@tv_services.columns[0].visible = false
+		
+		@tv_reporters = @gui["tvReporters"]
+		@tv_reporters.init([_("ID"), _("Title"), _("Plugin")])
+		@tv_reporters.columns[0].visible = false
 		
 		@window = @gui["window"]
 		
 		@window.show_all
-		update_servers
+		
+		update_groups
+		update_reporters
 	end
 	
-	def on_tvServices_button_press_event(widget, event)
+	def on_tvGroupServices_button_press_event(widget, event)
 		if (event.button == 3)
 			Gtk2::Menu.new(
 				"items" => {
@@ -46,21 +52,21 @@ class WinMain
 	end
 	
 	def on_addService_clicked
-		if (!@tv_servers.sel)
-			msgbox(_("Please select a server and try again."))
+		if (!@tv_groups.sel)
+			msgbox(_("Please select a group and try again."))
 			return nil
 		end
 		
-		server = $objects.get("Server", @tv_servers.sel[0])
-		WinServiceEdit.new({"transient_for" => @window, "server" => server, "win_main" => self})
+		group = $objects.get("Group", @tv_groups.sel[0])
+		WinServiceEdit.new({"transient_for" => @window, "group" => group, "win_main" => self})
 	end
 	
 	def on_editService_clicked
-		if (!@tv_servers.sel)
-			msgbox(_("Please select a server and try again."))
+		if (!@tv_groups.sel)
+			msgbox(_("Please select a group and try again."))
 			return nil
 		end
-		server = $objects.get("Server", @tv_servers.sel[0])
+		group = $objects.get("Group", @tv_groups.sel[0])
 		
 		sel = @tv_services.sel
 		if (!sel)
@@ -69,7 +75,7 @@ class WinMain
 		end
 		
 		service = $objects.get("Service", sel[0])
-		WinServiceEdit.new({"transient_for" => @window, "service" => service, "server" => server, "win_main" => self})
+		WinServiceEdit.new({"transient_for" => @window, "service" => service, "group" => group, "win_main" => self})
 	end
 	
 	def on_delService_clicked
@@ -111,26 +117,34 @@ class WinMain
 		end
 	end
 	
-	def update_servers
-		@tv_servers.model.clear
+	def update_groups
+		@tv_groups.model.clear
 		
-		q_servers = $db.select("servers")
-		while(d_servers = q_servers.fetch)
-			@tv_servers.append([d_servers["id"], d_servers["name"]])
+		q_groups = $db.select("groups")
+		while(d_groups = q_groups.fetch)
+			@tv_groups.append([d_groups["id"], d_groups["name"]])
 		end
 	end
 	
 	def update_services
 		@tv_services.model.clear
 		
-		sel = @tv_servers.sel
+		sel = @tv_groups.sel
 		if (!sel)
 			return nil
 		end
 		
-		server = $objects.get("Server", sel[0])
-		server.services.each do |service|
+		group = $objects.get("Group", sel[0])
+		group.services.each do |service|
 			@tv_services.append([service["id"], service["name"]])
+		end
+	end
+	
+	def update_reporters
+		@tv_reporters.model.clear
+		
+		$objects.list("Reporter").each do |reporter|
+			@tv_reporters.append([reporter["id"], reporter["name"], reporter.reporter_plugin.class.to_s])
 		end
 	end
 	
@@ -138,53 +152,100 @@ class WinMain
 		Gtk::main_quit
 	end
 	
-	def on_tvServers_changed
-		sel = @tv_servers.sel
-		if (sel)
-			server = $db.single("servers", {"id" => sel[0]})
-			@gui["txtName"].text = server["name"]
-			@gui["txtHost"].text = server["host"]
+	def on_tvGroups_changed
+		sel = @tv_groups.sel
+		if sel
+			group = $db.single("groups", {"id" => sel[0]})
+			@gui["txtGroupName"].text = group["name"]
 		else
-			@gui["txtName"].text = ""
-			@gui["txtHost"].text = ""
+			@gui["txtGroupName"].text = ""
 		end
 		
 		update_services
 	end
 	
 	def on_btnDelete_clicked
-		sel = @tv_servers.sel
+		sel = @tv_groups.sel
 		
-		if (!sel)
-			msgbox(_("Please select a server to delete."))
+		if !sel
+			msgbox(_("Please select a group to delete."))
 			return nil
 		end
 		
-		if (msgbox(_("Do you want to delete the server?"), "yesno") != "yes")
+		if msgbox(_("Do you want to delete the group?"), "yesno") != "yes"
 			return nil
 		end
 		
-		server = $objects.get("Server", sel[0])
-		$objects.delete(server)
+		group = $objects.get("Group", sel[0])
+		$objects.delete(group)
 		
-		update_servers
+		update_groups
 	end
 	
 	def on_btnSave_clicked
-		sel = @tv_servers.sel
+		sel = @tv_groups.sel
 		
 		save_hash = {
-			"name" => @gui["txtName"].text,
-			"host" => @gui["txtHost"].text
+			"name" => @gui["txtName"].text
 		}
 		
-		if (!sel)
-			$objects.add("Server", save_hash)
+		if !sel
+			$objects.add("Group", save_hash)
 		else
-			server = $objects.get("Server", sel[0])
-			server.update(save_hash)
+			group = $objects.get("Group", sel[0])
+			group.update(save_hash)
 		end
 		
-		update_servers
+		update_groups
+	end
+	
+	def on_tvReporters_button_press_event(widget, event)
+		if event.button == 3
+			Gtk2::Menu.new("items" => [
+				{
+					"text" => _("Add new"),
+					"connect" => [self, "on_addReporter_clicked"]
+				},
+				{
+					"text" => _("Edit"),
+					"connect" => [self, "on_editReporter_clicked"]
+				},
+				{
+					"text" => _("Delete"),
+					"connect" => [self, "on_delReporter_clicked"]
+				}
+			])
+		end
+	end
+	
+	def on_addReporter_clicked
+		WinReporterEdit.new
+	end
+	
+	def on_editReporter_clicked
+		sel = @tv_reporters.sel
+		if !sel
+			msgbox(_("Please select a reporter and try again."))
+			return nil
+		end
+		
+		reporter = $objects.get("Reporter", sel[0])
+		WinReporterEdit.new("reporter" => reporter)
+	end
+	
+	def on_delReporter_clicked
+		sel = @tv_reporters.sel
+		if !sel
+			msgbox(_("Please select a reporter and try again."))
+			return nil
+		end
+		
+		if msgbox(_("Do you want to delete this reporter?"), "yesno") != "yes"
+			return nil
+		end
+		
+		reporter = $objects.get("Reporter", sel[0])
+		$objects.delete(reporter)
+		update_reporters
 	end
 end

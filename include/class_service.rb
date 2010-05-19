@@ -11,8 +11,8 @@ class Service < Knj::Db_row
 	def self.list(paras = nil)
 		sql = "SELECT * FROM services WHERE 1=1"
 		
-		if (paras["server"])
-			sql += " AND server_id = '" + paras["server"]["id"].sql + "'"
+		if (paras["group"])
+			sql += " AND group_id = '" + paras["group"]["id"].sql + "'"
 		end
 		
 		sql += " ORDER BY name"
@@ -55,7 +55,21 @@ class Service < Knj::Db_row
 	
 	def reporters
 		ret = []
-		q_reporters = $db.select("reporters", {"service_id" => self["id"]})
+		q_reporters = $db.query("
+			SELECT
+				reporters.*
+			
+			FROM
+				reporters,
+				services_reporterlinks
+			
+			WHERE
+				services_reporterlinks.service_id = '#{self["id"]}' AND
+				reporters.id = services_reporterlinks.reporter_id
+			
+			ORDER BY
+				reporters.id
+		")
 		while(d_reporters = q_reporters.fetch)
 			ret << $objects.get("Reporter", d_reporters)
 		end

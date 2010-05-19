@@ -1,9 +1,9 @@
-class WinServiceReporterEdit
+class WinReporterEdit
 	def initialize(paras = {})
 		@paras = paras
 		
 		@gui = Gtk::Builder.new
-		@gui.add_from_file("gui/win_service_reporter_edit.ui")
+		@gui.add_from_file("gui/win_reporter_edit.ui")
 		@gui.connect_signals(){|h|method(h)}
 		@gui.translate
 		
@@ -14,13 +14,14 @@ class WinServiceReporterEdit
 		update_plugins
 		
 		if (@paras["reporter"])
+			@gui["txtName"].text = @paras["reporter"]["name"]
 			@gui["cbReporters"].sel = @paras["reporter"]["plugin"]
 			
 			@paras["reporter"].details.each do |key, value|
 				if (!@form["objects"][key])
 					msgbox("Could not find: " + key)
 				else
-					Knj::Gtk2::form_setval(@form["objects"][key]["object"], value)
+					Gtk2::form_setval(@form["objects"][key]["object"], value)
 				end
 			end
 		end
@@ -49,14 +50,14 @@ class WinServiceReporterEdit
 		sel = @gui["cbReporters"].sel
 		text = sel["text"]
 		
-		paras = Kernel.const_get("ServiceWatcherReporter" + ucwords(text)).paras
+		paras = Kernel.const_get("ServiceWatcherReporter" + Php::ucwords(text)).paras
 		
 		if (@form)
 			@gui["vboxPluginDetails"].remove(@form["table"])
 			@form["table"].destroy
 		end
 		
-		@form = Knj::Gtk2::form(paras)
+		@form = Gtk2::form(paras)
 		@gui["vboxPluginDetails"].pack_start(@form["table"])
 		@gui["vboxPluginDetails"].show_all
 	end
@@ -64,7 +65,7 @@ class WinServiceReporterEdit
 	def on_btnSave_clicked
 		sel = @gui["cbReporters"].sel
 		save_hash = {
-			"service_id" => @paras["service"]["id"],
+			"name" => @gui["txtName"].text,
 			"plugin" => sel["text"]
 		}
 		
@@ -77,7 +78,7 @@ class WinServiceReporterEdit
 		
 		reporter.del_details
 		@form["objects"].each do |key, objhash|
-			reporter.add_detail(key, Knj::Gtk2::form_getval(objhash["object"]))
+			reporter.add_detail(key, Gtk2::form_getval(objhash["object"]))
 		end
 		
 		if (@paras["win_service_edit"])

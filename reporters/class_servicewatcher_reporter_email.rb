@@ -56,6 +56,8 @@ class ServiceWatcherReporterEmail
 	end
 	
 	def report_error(error_hash)
+		#print "Report error: " + error_hash["error"].inspect
+		
 		require "knj/web"
 		
 		details = error_hash["reporter"].details
@@ -81,8 +83,5 @@ class ServiceWatcherReporterEmail
 			"smtp_domain" => details["txtsmtpdomain"]
 		)
 		mail.send
-		
-		print "Report error: " + error_hash["error"].inspect
-		#send email.
 	end
 end
