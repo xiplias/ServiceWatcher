@@ -33,6 +33,12 @@ class WinServiceEdit
 			
 			update_reporters
 			$objects.connect("callback" => [self, "update_reporters"], "object" => "Service_reporterlink", "signals" => ["add", "update", "delete"])
+			
+			@gui["cbGroup"].init($objects.list("Group"))
+			@gui["cbGroup"].sel = @paras["service"].group
+		else
+			@gui["cbGroup"].init($objects.list("Group"))
+			@gui["cbGroup"].sel = @paras["group"]
 		end
 		
 		@window.show_all
@@ -93,7 +99,7 @@ class WinServiceEdit
 	def on_btnSave_clicked
 		save_hash = {
 			"name" => @gui["txtName"].text,
-			"group_id" => @paras["group"].id,
+			"group_id" => @gui["cbGroup"].sel.id,
 			"plugin" => @gui["cbPlugin"].sel["text"]
 		}
 		

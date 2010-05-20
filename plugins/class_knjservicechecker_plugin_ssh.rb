@@ -4,7 +4,8 @@ class KnjServiceCheckerPluginSsh
 			{
 				"type" => "text",
 				"title" => _("Port"),
-				"name" => "txtport"
+				"name" => "txtport",
+				"default" => "22"
 			},
 			{
 				"type" => "text",

@@ -13,7 +13,6 @@
     <child>
       <object class="GtkVBox" id="vbox1">
         <property name="visible">True</property>
-        <property name="orientation">vertical</property>
         <property name="spacing">8</property>
         <child>
           <object class="GtkFrame" id="frame1">
@@ -27,7 +26,7 @@
                 <child>
                   <object class="GtkTable" id="table1">
                     <property name="visible">True</property>
-                    <property name="n_rows">2</property>
+                    <property name="n_rows">3</property>
                     <property name="n_columns">2</property>
                     <property name="column_spacing">4</property>
                     <property name="row_spacing">4</property>
@@ -79,6 +78,31 @@
                         <property name="y_options">GTK_FILL</property>
                       </packing>
                     </child>
+                    <child>
+                      <object class="GtkLabel" id="label7">
+                        <property name="visible">True</property>
+                        <property name="xalign">0</property>
+                        <property name="label" translatable="yes">Group</property>
+                      </object>
+                      <packing>
+                        <property name="top_attach">2</property>
+                        <property name="bottom_attach">3</property>
+                        <property name="x_options">GTK_FILL</property>
+                        <property name="y_options">GTK_FILL</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkComboBox" id="cbGroup">
+                        <property name="visible">True</property>
+                      </object>
+                      <packing>
+                        <property name="left_attach">1</property>
+                        <property name="right_attach">2</property>
+                        <property name="top_attach">2</property>
+                        <property name="bottom_attach">3</property>
+                        <property name="y_options">GTK_FILL</property>
+                      </packing>
+                    </child>
                   </object>
                 </child>
               </object>
@@ -108,7 +132,6 @@
                 <child>
                   <object class="GtkVBox" id="boxPluginDetails">
                     <property name="visible">True</property>
-                    <property name="orientation">vertical</property>
                     <child>
                       <placeholder/>
                     </child>

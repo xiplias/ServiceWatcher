@@ -8,6 +8,12 @@ class KnjServiceCheckerPluginMysql
 			},
 			{
 				"type" => "text",
+				"title" => _("Port"),
+				"name" => "txtport",
+				"default" => "3306"
+			},
+			{
+				"type" => "text",
 				"title" => _("Username"),
 				"name" => "txtuser"
 			},
@@ -19,7 +25,8 @@ class KnjServiceCheckerPluginMysql
 			{
 				"type" => "text",
 				"title" => _("Database"),
-				"name" => "txtdb"
+				"name" => "txtdb",
+				"default" => "mysql"
 			}
 		]
 	end
@@ -30,7 +37,7 @@ class KnjServiceCheckerPluginMysql
 	
 	def check
 		begin
-			conn = Mysql.real_connect(@paras["txthost"], @paras["txtuser"], @paras["txtpasswd"], @paras["txtdb"])
+			conn = Mysql.real_connect(@paras["txthost"], @paras["txtuser"], @paras["txtpasswd"], @paras["txtdb"], @paras["txtport"].to_i)
 		rescue => e
 			raise "MySQL connection failed for #{@paras["txtuser"]}@#{@paras["txthost"]}:#{@paras["txtdb"]}! - " + e.inspect
 		end

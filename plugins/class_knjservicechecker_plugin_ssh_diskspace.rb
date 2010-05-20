@@ -3,13 +3,14 @@ class KnjServiceCheckerPluginSsh_diskspace
 		return [
 			{
 				"type" => "text",
-				"title" => _("Port"),
-				"name" => "txtport"
+				"title" => _("Hostname"),
+				"name" => "txthost"
 			},
 			{
 				"type" => "text",
-				"title" => _("Hostname"),
-				"name" => "txthost"
+				"title" => _("Port"),
+				"name" => "txtport",
+				"default" => "22"
 			},
 			{
 				"type" => "text",

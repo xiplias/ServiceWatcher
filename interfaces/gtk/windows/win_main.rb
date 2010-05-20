@@ -147,6 +147,10 @@ class WinMain
 	def update_groupreporters(*paras)
 		@tv_gdreporters.model.clear
 		
+		if !self.group("warn" => false)
+			return nil
+		end
+		
 		self.group.reporters.each do |link|
 			@tv_gdreporters.append([
 				link.id,
@@ -160,11 +164,14 @@ class WinMain
 		Gtk::main_quit
 	end
 	
-	def group
+	def group(paras = {})
 		sel = @tv_groups.sel
 		
 		if !sel
-			msgbox(_("Please select a group to delete."))
+			if (!paras.has_key?("warn") or paras["warn"])
+				msgbox(_("Please select a group."))
+			end
+			
 			return nil
 		end
 		

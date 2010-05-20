@@ -4,7 +4,8 @@ class KnjServiceCheckerPluginHttp
 			{
 				"type" => "text",
 				"title" => _("Port"),
-				"name" => "txtport"
+				"name" => "txtport",
+				"default" => "80"
 			},
 			{
 				"type" => "text",
