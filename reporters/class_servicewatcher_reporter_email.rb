@@ -72,7 +72,10 @@ class ServiceWatcherReporterEmail
 		
 		mail = Knj::Mail.new(
 			"from" => details["txtfromaddress"],
-			"subject" => details["txtsubject"],
+			"subject" => ServiceWatcher::parse_subject(
+				"error" => error_hash["error"],
+				"subject" => details["txtsubject"]
+			),
 			"to" => details["txtaddress"],
 			"html" => html,
 			"ssl" => ssl,

@@ -20,6 +20,8 @@ rescue LoadError
 end
 
 require("knj/autoload")
+require("knj/web") #for String::sql and String::html - knj.
+
 include Knj
 
 autoload :ServiceWatcher, File.dirname(__FILE__) + "/class_servicewatcher"
@@ -41,16 +43,14 @@ $objects = Knj::Objects.new(
 plugins_path = File.dirname(__FILE__) + "/../plugins"
 Dir.new(plugins_path).entries.each do |plugin_file|
 	if (plugin_file != "." and plugin_file != "..")
-		eval_code = "autoload :KnjServiceCheckerPlugin" + Php::ucwords(plugin_file.slice(31..-4)) + ", \"" + plugins_path + "/" + plugin_file + "\""
-		eval(eval_code)
+		autoload(("KnjServiceCheckerPlugin" + Php::ucwords(plugin_file.slice(31..-4))).to_sym, plugins_path + "/" + plugin_file)
 	end
 end
 
 reporters_path = File.dirname(__FILE__) + "/../reporters"
 Dir.new(reporters_path).entries.each do |reporter_file|
 	if (reporter_file != "." and reporter_file != "..")
-		eval_code = "autoload :ServiceWatcherReporter" + Php::ucwords(reporter_file.slice(30..-4)) + ", \"" + reporters_path + "/" + reporter_file + "\""
-		eval(eval_code)
+		autoload(("ServiceWatcherReporter" + Php::ucwords(reporter_file.slice(30..-4))).to_sym, reporters_path + "/" + reporter_file)
 	end
 end
 

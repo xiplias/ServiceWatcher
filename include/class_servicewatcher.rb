@@ -22,4 +22,9 @@ class ServiceWatcher
 			}
 		end
 	end
+	
+	def self.parse_subject(paras)
+		subject = paras["subject"].gsub("%subject%", paras["error"].inspect.to_s)
+		return subject
+	end
 end
