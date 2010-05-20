@@ -22,6 +22,9 @@ class WinMain
 		
 		@window.show_all
 		
+		$objects.connect("callback" => [self, "update_reporters"], "object" => "Reporter", "signals" => ["add", "update", "delete"])
+		$objects.connect("callback" => [self, "update_groups"], "object" => "Group", "signals" => ["add", "update", "delete"])
+		
 		update_groups
 		update_reporters
 	end
@@ -117,7 +120,7 @@ class WinMain
 		end
 	end
 	
-	def update_groups
+	def update_groups(*paras)
 		@tv_groups.model.clear
 		
 		q_groups = $db.select("groups")
@@ -126,7 +129,7 @@ class WinMain
 		end
 	end
 	
-	def update_services
+	def update_services(*paras)
 		@tv_services.model.clear
 		
 		sel = @tv_groups.sel
@@ -140,7 +143,7 @@ class WinMain
 		end
 	end
 	
-	def update_reporters
+	def update_reporters(*paras)
 		@tv_reporters.model.clear
 		
 		$objects.list("Reporter").each do |reporter|
@@ -178,15 +181,13 @@ class WinMain
 		
 		group = $objects.get("Group", sel[0])
 		$objects.delete(group)
-		
-		update_groups
 	end
 	
 	def on_btnSave_clicked
 		sel = @tv_groups.sel
 		
 		save_hash = {
-			"name" => @gui["txtName"].text
+			"name" => @gui["txtGroupName"].text
 		}
 		
 		if !sel
@@ -195,8 +196,6 @@ class WinMain
 			group = $objects.get("Group", sel[0])
 			group.update(save_hash)
 		end
-		
-		update_groups
 	end
 	
 	def on_tvReporters_button_press_event(widget, event)

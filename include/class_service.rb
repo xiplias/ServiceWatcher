@@ -1,6 +1,6 @@
 class Service < Knj::Db_row
 	def initialize(data)
-		super({"db" => $db, "table" => "services", "data" => data, "col_title" => "name"})
+		super({"db" => $db, "table" => "services", "objects" => $objects, "data" => data, "col_title" => "name"})
 	end
 	
 	def self.add(data)

@@ -1,6 +1,6 @@
 class Reporter < Knj::Db_row
 	def initialize(data)
-		super("db" => $db, "table" => "reporters", "data" => data, "col_title" => "plugin")
+		super("db" => $db, "table" => "reporters", "objects" => $objects, "data" => data, "col_title" => "plugin")
 	end
 	
 	def self.add(data)
