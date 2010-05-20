@@ -1,4 +1,4 @@
-#Some Mac-users have problems (Xiplias included). This safes them from a complete crash and following horrors - knj.
+#Some Mac-users have problems (Xiplias included). This saves them from a complete crash and following horrors - knj.
 begin
 	require "gettext"
 rescue LoadError
