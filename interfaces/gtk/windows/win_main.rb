@@ -19,11 +19,11 @@ class WinMain
 		@tv_reporters.columns[0].visible = false
 		
 		@window = @gui["window"]
-		
 		@window.show_all
 		
 		$objects.connect("callback" => [self, "update_reporters"], "object" => "Reporter", "signals" => ["add", "update", "delete"])
 		$objects.connect("callback" => [self, "update_groups"], "object" => "Group", "signals" => ["add", "update", "delete"])
+		$objects.connect("callback" => [self, "update_services"], "object" => "Service", "signals" => ["add", "update", "delete"])
 		
 		update_groups
 		update_reporters
