@@ -1,6 +1,6 @@
 class Service < Knj::Db_row
 	def initialize(data)
-		super({"db" => $db, "table" => "services", "objects" => $objects, "data" => data, "col_title" => "name"})
+		super("table" => "services", "data" => data, "col_title" => "name")
 	end
 	
 	def self.add(data)
@@ -54,26 +54,25 @@ class Service < Knj::Db_row
 	end
 	
 	def reporters
-		ret = []
-		q_reporters = $db.query("
-			SELECT
-				reporters.*
-			
-			FROM
-				reporters,
-				services_reporterlinks
-			
-			WHERE
-				services_reporterlinks.service_id = '#{self["id"]}' AND
-				reporters.id = services_reporterlinks.reporter_id
-			
-			ORDER BY
-				reporters.id
-		")
-		while(d_reporters = q_reporters.fetch)
-			ret << $objects.get("Reporter", d_reporters)
+		return $objects.list("Service_reporterlink", {"service" => self})
+	end
+	
+	def reporters_merged
+		reporters = []
+		self.reporters.each do |link|
+			reporters << link.reporter
 		end
 		
-		return ret
+		group.reporters.each do |link|
+			if !reporters.index(link.reporter)
+				reporters << link.reporter
+			end
+		end
+		
+		return reporters
+	end
+	
+	def group
+		return $objects.get("Group", self["group_id"])
 	end
 end

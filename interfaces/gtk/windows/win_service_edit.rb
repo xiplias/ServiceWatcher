@@ -32,6 +32,7 @@ class WinServiceEdit
 			@tv_reporters.columns[0].visible = false
 			
 			update_reporters
+			$objects.connect("callback" => [self, "update_reporters"], "object" => "Service_reporterlink", "signals" => ["add", "update", "delete"])
 		end
 		
 		@window.show_all
@@ -46,6 +47,7 @@ class WinServiceEdit
 		@paras = nil
 		@gui = nil
 		@window = nil
+		@tv_reporters = nil
 	end
 	
 	def update_plugins
@@ -60,11 +62,15 @@ class WinServiceEdit
 		@gui["cbPlugin"].active = 0
 	end
 	
-	def update_reporters
+	def update_reporters(*paras)
+		if !@tv_reporters
+			return nil
+		end
+		
 		@tv_reporters.model.clear
 		
-		@paras["service"].reporters.each do |reporter|
-			@tv_reporters.append([reporter["id"], reporter["plugin"], reporter["plugin"]])
+		@paras["service"].reporters.each do |link|
+			@tv_reporters.append([link.id, link.title, link.reporter["plugin"]])
 		end
 	end
 	
@@ -87,7 +93,7 @@ class WinServiceEdit
 	def on_btnSave_clicked
 		save_hash = {
 			"name" => @gui["txtName"].text,
-			"group_id" => @paras["group"]["id"],
+			"group_id" => @paras["group"].id,
 			"plugin" => @gui["cbPlugin"].sel["text"]
 		}
 		
@@ -121,38 +127,32 @@ class WinServiceEdit
 	
 	def on_tvReporters_button_press_event(widget, event)
 		if (event.button == 3)
-			Gtk2::Menu.new(
-				"items" => {
-					"add" => {
-						"text" => _("Add new"),
-						"connect" => [self, "on_addReporter_clicked"]
-					},
-					"edit" => {
-						"text" => _("Edit reporter"),
-						"connect" => [self, "on_editReporter_clicked"]
-					},
-					"del" => {
-						"text" => _("Delete reporter"),
-						"connect" => [self, "on_delReporter_clicked"]
-					}
-				}
-			)
+			Gtk2::Menu.new("items" => [
+				[_("Add new"), [self, "on_addReporter_clicked"]],
+				[_("Delete reporter"), [self, "on_delReporter_clicked"]]
+			])
 		end
 	end
 	
 	def on_addReporter_clicked
-		WinServiceReporterEdit.new("transient_for" => @gui["window"], "service" => @paras["service"], "win_service_edit" => self)
-	end
-	
-	def on_editReporter_clicked
-		reporter_sel = @tv_reporters.sel
-		if (!reporter_sel)
-			msgbox(_("Please select a reporter and try again."))
+		reporter = Gtk2::msgbox(
+			"type" => "list",
+			"items" => $objects.list("Reporter"),
+			"title" => _("Choose reporter")
+		)
+		
+		if !reporter
 			return nil
 		end
 		
-		reporter = $objects.get("Reporter", reporter_sel[0])
-		WinServiceReporterEdit.new("transient_for" => @gui["window"], "service" => @paras["service"], "reporter" => reporter, "win_service_edit" => self)
+		begin
+			link = $objects.add("Service_reporterlink", {
+				"reporter_id" => reporter["id"],
+				"service_id" => @paras["service"].id
+			})
+		rescue Errors::Notice => e
+			msgbox(e.message)
+		end
 	end
 	
 	def on_delReporter_clicked
@@ -166,9 +166,7 @@ class WinServiceEdit
 			return nil
 		end
 		
-		reporter = $objects.get("Reporter", reporter_sel[0])
-		$objects.delete(reporter)
-		
-		update_reporters
+		link = $objects.get("Service_reporterlink", reporter_sel[0])
+		$objects.delete(link)
 	end
 end

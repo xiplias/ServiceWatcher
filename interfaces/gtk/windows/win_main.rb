@@ -18,12 +18,17 @@ class WinMain
 		@tv_reporters.init([_("ID"), _("Title"), _("Plugin")])
 		@tv_reporters.columns[0].visible = false
 		
+		@tv_gdreporters = @gui["tvGroupDefaultReporters"]
+		@tv_gdreporters.init([_("ID"), _("Title"), _("Plugin")])
+		@tv_gdreporters.columns[0].visible = false
+		
 		@window = @gui["window"]
 		@window.show_all
 		
 		$objects.connect("callback" => [self, "update_reporters"], "object" => "Reporter", "signals" => ["add", "update", "delete"])
 		$objects.connect("callback" => [self, "update_groups"], "object" => "Group", "signals" => ["add", "update", "delete"])
 		$objects.connect("callback" => [self, "update_services"], "object" => "Service", "signals" => ["add", "update", "delete"])
+		$objects.connect("callback" => [self, "update_groupreporters"], "object" => "Group_reporterlink", "signals" => ["add", "update", "delete"])
 		
 		update_groups
 		update_reporters
@@ -31,26 +36,12 @@ class WinMain
 	
 	def on_tvGroupServices_button_press_event(widget, event)
 		if (event.button == 3)
-			Gtk2::Menu.new(
-				"items" => {
-					"add" => {
-						"text" => _("Add new"),
-						"connect" => [self, "on_addService_clicked"]
-					},
-					"edit" => {
-						"text" => _("Edit service"),
-						"connect" => [self, "on_editService_clicked"]
-					},
-					"del" => {
-						"text" => _("Delete service"),
-						"connect" => [self, "on_delService_clicked"]
-					},
-					"run" => {
-						"text" => _("Run"),
-						"connect" => [self, "on_runService_clicked"]
-					}
-				}
-			)
+			Gtk2::Menu.new("items" => [
+				[_("Add new"), [self, "on_addService_clicked"]],
+				[_("Edit service"), [self, "on_editService_clicked"]],
+				[_("Delete service"), [self, "on_delService_clicked"]],
+				[_("Run"), [self, "on_runService_clicked"]]
+			])
 		end
 	end
 	
@@ -113,8 +104,10 @@ class WinMain
 		if (!result["errorstatus"])
 			msgbox(_("The check was executed with success."))
 		else
-			puts obj["error"].inspect
-			puts obj["error"].backtrace + "\n"
+			puts result["error"].inspect
+			print "\n"
+			puts result["error"].backtrace
+			print "\n\n"
 			
 			msgbox(_("The check returned an error.") + "\n\n" + result["error"].inspect)
 		end
@@ -151,8 +144,31 @@ class WinMain
 		end
 	end
 	
+	def update_groupreporters(*paras)
+		@tv_gdreporters.model.clear
+		
+		self.group.reporters.each do |link|
+			@tv_gdreporters.append([
+				link.id,
+				link.title,
+				link.reporter.plugin.class.to_s
+			])
+		end
+	end
+	
 	def on_window_destroy
 		Gtk::main_quit
+	end
+	
+	def group
+		sel = @tv_groups.sel
+		
+		if !sel
+			msgbox(_("Please select a group to delete."))
+			return nil
+		end
+		
+		return $objects.get("Group", sel[0])
 	end
 	
 	def on_tvGroups_changed
@@ -165,54 +181,35 @@ class WinMain
 		end
 		
 		update_services
+		update_groupreporters
 	end
 	
 	def on_btnDelete_clicked
-		sel = @tv_groups.sel
-		
-		if !sel
-			msgbox(_("Please select a group to delete."))
-			return nil
-		end
-		
 		if msgbox(_("Do you want to delete the group?"), "yesno") != "yes"
 			return nil
 		end
 		
-		group = $objects.get("Group", sel[0])
-		$objects.delete(group)
+		$objects.delete(self.group)
 	end
 	
 	def on_btnSave_clicked
-		sel = @tv_groups.sel
-		
 		save_hash = {
 			"name" => @gui["txtGroupName"].text
 		}
 		
-		if !sel
+		if !self.group
 			$objects.add("Group", save_hash)
 		else
-			group = $objects.get("Group", sel[0])
-			group.update(save_hash)
+			self.group.update(save_hash)
 		end
 	end
 	
 	def on_tvReporters_button_press_event(widget, event)
 		if event.button == 3
 			Gtk2::Menu.new("items" => [
-				{
-					"text" => _("Add new"),
-					"connect" => [self, "on_addReporter_clicked"]
-				},
-				{
-					"text" => _("Edit"),
-					"connect" => [self, "on_editReporter_clicked"]
-				},
-				{
-					"text" => _("Delete"),
-					"connect" => [self, "on_delReporter_clicked"]
-				}
+				[_("Add new"), [self, "on_addReporter_clicked"]],
+				[_("Edit"), [self, "on_editReporter_clicked"]],
+				[_("Delete"), [self, "on_delReporter_clicked"]]
 			])
 		end
 	end
@@ -246,5 +243,50 @@ class WinMain
 		reporter = $objects.get("Reporter", sel[0])
 		$objects.delete(reporter)
 		update_reporters
+	end
+	
+	def on_tvGroupDefaultReporters_button_press_event(widget, event)
+		if event.button == 3
+			Gtk2::Menu.new("items" => [
+				[_("Add new"), [self, "on_addGroupReporter_clicked"]],
+				[_("Delete"), [self, "on_delGroupReporter_clicked"]]
+			])
+		end
+	end
+	
+	def on_addGroupReporter_clicked
+		reporter = Gtk2::msgbox(
+			"title" => _("Choose reporter"),
+			"type" => "list",
+			"items" => $objects.list("Reporter")
+		)
+		
+		if !reporter
+			return false
+		end
+		
+		begin
+			rlink = $objects.add("Group_reporterlink", {
+				"reporter_id" => reporter["id"],
+				"group_id" => self.group["id"]
+			})
+		rescue Errors::Notice => e
+			msgbox(e.message)
+		end
+	end
+	
+	def on_delGroupReporter_clicked
+		sel = @tv_gdreporters.sel
+		if !sel
+			msgbox(_("Please select a reporter and try again."))
+			return nil
+		end
+		
+		if msgbox(_("Do you want to remove this reporter?"), "yesno") != "yes"
+			return nil
+		end
+		
+		link = $objects.get("Group_reporterlink", sel[0])
+		$objects.delete(link)
 	end
 end

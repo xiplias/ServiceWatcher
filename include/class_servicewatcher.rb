@@ -12,7 +12,7 @@ class ServiceWatcher
 				"errorstatus" => false
 			}
 		rescue => e
-			paras["service"].reporters.each do |reporter|
+			paras["service"].reporters_merged.each do |reporter|
 				reporter.reporter_plugin.report_error("reporter" => reporter, "error" => e, "plugin" => paras["plugin"], "service" => paras["service"])
 			end
 			

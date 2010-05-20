@@ -1,6 +1,6 @@
 class Reporter < Knj::Db_row
 	def initialize(data)
-		super("db" => $db, "table" => "reporters", "objects" => $objects, "data" => data, "col_title" => "plugin")
+		super("table" => "reporters", "data" => data, "col_title" => "name")
 	end
 	
 	def self.add(data)
@@ -21,6 +21,14 @@ class Reporter < Knj::Db_row
 	end
 	
 	def delete
+		self.groups.each do |link|
+			$objects.delete(link)
+		end
+		
+		self.services.each do |link|
+			$objects.delete(link)
+		end
+		
 		self.del_details
 		$db.delete("reporters", {"id" => self["id"]})
 	end
@@ -46,5 +54,15 @@ class Reporter < Knj::Db_row
 	def reporter_plugin
 		obj_name = "ServiceWatcherReporter" + Php::ucwords(self["plugin"])
 		return Kernel.const_get(obj_name).new(self.details)
+	end
+	
+	alias plugin reporter_plugin
+	
+	def groups
+		return $objects.list("Group_reporterlink", {"reporter" => self})
+	end
+	
+	def services
+		return $objects.list("Service_reporterlink", {"reporter" => self})
 	end
 end

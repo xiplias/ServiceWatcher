@@ -1,6 +1,6 @@
 class Group < Knj::Db_row
 	def initialize(data)
-		super("db" => $db, "table" => "groups", "data" => data, "objects" => $objects, "col_title" => "name")
+		super("table" => "groups", "data" => data, "col_title" => "name")
 	end
 	
 	def self.add(data)
@@ -14,5 +14,9 @@ class Group < Knj::Db_row
 	
 	def services
 		return $objects.list("Service", {"group" => self})
+	end
+	
+	def reporters
+		return $objects.list("Group_reporterlink", {"group" => self})
 	end
 end
