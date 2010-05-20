@@ -64,7 +64,7 @@ class ServiceWatcherReporterEmail
 		
 		html = _("An error occurred") + "\n\n" + error_hash["error"].inspect.to_s.html
 		
-		if (details["chessl"] == "1")
+		if details["chessl"] == "1"
 			ssl = true
 		else
 			ssl = false

@@ -11,7 +11,7 @@ class Service < Knj::Db_row
 	def self.list(paras = nil)
 		sql = "SELECT * FROM services WHERE 1=1"
 		
-		if (paras["group"])
+		if paras["group"]
 			sql += " AND group_id = '" + paras["group"]["id"].sql + "'"
 		end
 		
@@ -19,7 +19,7 @@ class Service < Knj::Db_row
 		
 		ret = []
 		q_services = $db.query(sql)
-		while(d_services = q_services.fetch)
+		while d_services = q_services.fetch
 			ret << $objects.get("Service", d_services)
 		end
 		
@@ -46,7 +46,7 @@ class Service < Knj::Db_row
 	def details
 		data = {}
 		q_details = $db.select("services_options", {"service_id" => self["id"]})
-		while(d_details = q_details.fetch)
+		while d_details = q_details.fetch
 			data[d_details["opt_name"]] = d_details["opt_value"]
 		end
 		
