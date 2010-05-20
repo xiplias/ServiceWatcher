@@ -29,8 +29,6 @@ class KnjServiceCheckerPluginSsh
 	end
 	
 	def check
-		raise "test"
-		
 		begin
 			sshrobot = Knj::SSHRobot.new(
 				"host" => @paras["txthost"],

@@ -6,8 +6,8 @@
     <property name="border_width">4</property>
     <property name="title" translatable="yes">knjServiceChecker</property>
     <property name="window_position">center</property>
-    <property name="default_width">640</property>
-    <property name="default_height">480</property>
+    <property name="default_width">800</property>
+    <property name="default_height">600</property>
     <signal name="destroy" handler="on_window_destroy"/>
     <child>
       <object class="GtkNotebook" id="notebook1">
