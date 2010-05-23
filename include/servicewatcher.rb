@@ -27,9 +27,21 @@ include Knj
 autoload :ServiceWatcher, File.dirname(__FILE__) + "/class_servicewatcher"
 
 #Database.
+sw_path = Knj::Os.homedir + "/.servicewatcher"
+dbpath = sw_path + "/servicewatcher.sqlite3"
+samplepath = File.dirname(__FILE__) + "/../database/servicewatcher_sample.sqlite3"
+
+if !File.exists?(sw_path)
+	FileUtils.mkdir_p(sw_path)
+end
+
+if !File.exists?(dbpath)
+	FileUtils.cp_r(samplepath, dbpath)
+end
+
 $db = Knj::Db.new(
 	"type" => "sqlite3",
-	"path" => File.dirname(__FILE__) + "/../database/servicewatcher.sqlite3"
+	"path" => dbpath
 )
 
 
