@@ -1,0 +1,5 @@
+== Installation on Ubuntu ==
+
+sudo wget http://downloads.kaspernj.org/ubuntu/kaspernj.org.sources.list -O /etc/apt/sources.list.d/kaspernj.org.sources.list
+sudo aptitude update
+sudo aptitude install servicewatcher
