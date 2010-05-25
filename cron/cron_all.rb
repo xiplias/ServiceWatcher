@@ -1,8 +1,6 @@
 #!/usr/bin/ruby
 
 require "knj/autoload"
-print "Homedir: " + Knj::Os.homedir + "\n"
-
 Knj::Os.chdir_file(__FILE__)
 require "../include/servicewatcher.rb"
 
