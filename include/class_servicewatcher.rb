@@ -5,15 +5,28 @@ class ServiceWatcher
 	end
 	
 	def self.check_and_report(paras)
+		staticmethod = false
+		
+		if !paras["plugin"] and paras["pluginname"]
+			classob = ServiceWatcher.plugin_class(paras["pluginname"])
+			if classob.respond_to?("check")
+				staticmethod = true
+			end
+		end
+		
 		begin
-			paras["plugin"].check
+			if staticmethod
+				classob.check(paras["service"].details)
+			else
+				paras["plugin"].check
+			end
 			
 			return {
 				"errorstatus" => false
 			}
 		rescue => e
 			paras["service"].reporters_merged.each do |reporter|
-				reporter.reporter_plugin.report_error("reporter" => reporter, "error" => e, "plugin" => paras["plugin"], "service" => paras["service"])
+				reporter.reporter_plugin.report_error("reporter" => reporter, "error" => e, "pluginname" => paras["pluginname"], "plugin" => paras["plugin"], "service" => paras["service"])
 			end
 			
 			return {

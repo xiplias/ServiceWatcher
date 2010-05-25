@@ -31,19 +31,11 @@ class KnjServiceCheckerPluginMysql
 		]
 	end
 	
-	def initialize(paras)
-		@paras = paras
-	end
-	
-	def check
+	def self.check(paras)
 		begin
-			conn = Mysql.real_connect(@paras["txthost"], @paras["txtuser"], @paras["txtpasswd"], @paras["txtdb"], @paras["txtport"].to_i)
+			conn = Mysql.real_connect(paras["txthost"], paras["txtuser"], paras["txtpasswd"], paras["txtdb"], paras["txtport"].to_i)
 		rescue => e
-			raise "MySQL connection failed for #{@paras["txtuser"]}@#{@paras["txthost"]}:#{@paras["txtdb"]}! - " + e.inspect
+			raise "MySQL connection failed for #{paras["txtuser"]}@#{paras["txthost"]}:#{paras["txtdb"]}! - " + e.inspect
 		end
-	end
-	
-	def destroy
-		@paras = nil
 	end
 end

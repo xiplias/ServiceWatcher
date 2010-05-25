@@ -35,24 +35,20 @@ class KnjServiceCheckerPluginSsh_diskspace
 		]
 	end
 	
-	def initialize(paras)
-		@paras = paras
-	end
-	
-	def check
+	def self.check(paras)
 		sshrobot = Knj::SSHRobot.new(
-			"host" => @paras["txthost"],
-			"port" => @paras["txtport"].to_i,
-			"user" => @paras["txtuser"],
-			"passwd" => @paras["txtpasswd"]
+			"host" => paras["txthost"],
+			"port" => paras["txtport"].to_i,
+			"user" => paras["txtuser"],
+			"passwd" => paras["txtpasswd"]
 		)
 		
-		if !Php.is_numeric(@paras["txtwarnperc"])
+		if !Php.is_numeric(paras["txtwarnperc"])
 			raise "Warning percent is not numeric - please enter it correctly as number only."
 		end
 		
-		warnperc = @paras["txtwarnperc"].to_i
-		output = sshrobot.exec("df -m -P " + Knj::Strings::UnixSafe(@paras["txtpath"]))
+		warnperc = paras["txtwarnperc"].to_i
+		output = sshrobot.exec("df -m -P " + Knj::Strings::UnixSafe(paras["txtpath"]))
 		
 		match = output.match(/([0-9]+)%/)
 		
@@ -63,9 +59,5 @@ class KnjServiceCheckerPluginSsh_diskspace
 		if match[1].to_i > warnperc
 			raise "Diskspace percent is " + match[1] + " - warning percent is " + warnperc.to_s + "."
 		end
-	end
-	
-	def destroy
-		@paras = nil
 	end
 end

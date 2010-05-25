@@ -39,16 +39,12 @@ class KnjServiceCheckerPluginSsh_ftp
 		]
 	end
 	
-	def initialize(paras)
-		@paras = paras
-	end
-	
-	def check
+	def self.check(paras)
 		sshrobot = Knj::SSHRobot.new(
-			"host" => @paras["txtsshhost"],
-			"port" => @paras["txtsshport"].to_i,
-			"user" => @paras["txtsshuser"],
-			"passwd" => @paras["txtsshpasswd"]
+			"host" => paras["txtsshhost"],
+			"port" => paras["txtsshport"].to_i,
+			"user" => paras["txtsshuser"],
+			"passwd" => paras["txtsshpasswd"]
 		)
 		sshrobot.session
 		
@@ -56,14 +52,10 @@ class KnjServiceCheckerPluginSsh_ftp
 			raise "lftp is not installed on server."
 		end
 		
-		output = sshrobot.exec("/usr/bin/lftp #{@paras["txtftphost"]} -p #{@paras["txtftpport"]} -u #{@paras["txtftpuser"]},#{@paras["txtftppasswd"]} -d -e \"ls;quit\"")
+		output = sshrobot.exec("/usr/bin/lftp #{Strings.unixsafe(paras["txtftphost"])} -p #{Strings.unixsafe(paras["txtftpport"])} -u #{Strings.unixsafe(paras["txtftpuser"])},#{Strings.unixsafe(paras["txtftppasswd"])} -d -e \"ls;quit\"")
 		
 		if !output.index("<--- 226 Transfer complete")
 			raise output
 		end
-	end
-	
-	def destroy
-		@paras = nil
 	end
 end

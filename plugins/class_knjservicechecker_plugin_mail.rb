@@ -35,37 +35,29 @@ class KnjServiceCheckerPluginMail
 		]
 	end
 	
-	def initialize(paras)
-		@paras = paras
-	end
-	
-	def check
-		if @paras["chessl"] == "1"
+	def self.check(paras)
+		if paras["chessl"] == "1"
 			sslval = true
 		else
 			sslval = false
 		end
 		
-		if @paras["seltype"] == "IMAP"
-			conn = Net::IMAP.new(@paras["txthost"], @paras["txtport"].to_i, sslval)
-			conn.login(@paras["txtuser"], @paras["txtpass"])
-		elsif @paras["seltype"] == "POP"
-			conn = Net::POP.new(@paras["txthost"], @paras["txtport"].to_i, sslval)
-			conn.start(@paras["txtuser"], @paras["txtpass"])
-		elsif @paras["seltype"] == "SMTP"
-			conn = Net::SMTP.new(@paras["txthost"], @paras["txtport"].to_i)
+		if paras["seltype"] == "IMAP"
+			conn = Net::IMAP.new(paras["txthost"], paras["txtport"].to_i, sslval)
+			conn.login(paras["txtuser"], paras["txtpass"])
+		elsif paras["seltype"] == "POP"
+			conn = Net::POP.new(paras["txthost"], paras["txtport"].to_i, sslval)
+			conn.start(paras["txtuser"], paras["txtpass"])
+		elsif paras["seltype"] == "SMTP"
+			conn = Net::SMTP.new(paras["txthost"], paras["txtport"].to_i)
 			
 			if (sslval)
 				conn.enable_ssl
 			end
 			
-			conn.start(@paras["txthost"], @paras["txtuser"], @paras["txtpass"]) do |smtp|
+			conn.start(paras["txthost"], paras["txtuser"], paras["txtpass"]) do |smtp|
 				#nothing here.
 			end
 		end
-	end
-	
-	def destroy
-		@paras = nil
 	end
 end

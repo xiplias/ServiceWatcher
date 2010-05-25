@@ -25,22 +25,14 @@ class KnjServiceCheckerPluginHttp
 		]
 	end
 	
-	def initialize(paras)
-		@paras = paras
-	end
-	
-	def check
-		http = Net::HTTP.new(@paras["txthost"], @paras["txtport"])
+	def check(paras)
+		http = Net::HTTP.new(paras["txthost"], paras["txtport"])
 		
-		if (@paras["chessl"] == "1")
+		if (paras["chessl"] == "1")
 			require "net/https"
 			http.use_ssl = true
 		end
 		
-		resp, data = http.get2("/" + @paras["txtaddr"])
-	end
-	
-	def destroy
-		@paras = nil
+		resp, data = http.get2("/" + paras["txtaddr"])
 	end
 end

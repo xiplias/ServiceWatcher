@@ -97,9 +97,8 @@ class WinMain
 		end
 		
 		service = $objects.get("Service", sel[0])
-		obj = ServiceWatcher::plugin_class(service["plugin"]).new(service.details)
 		
-		result = ServiceWatcher::check_and_report("plugin" => obj, "service" => service)
+		result = ServiceWatcher.check_and_report("pluginname" => service["plugin"], "service" => service)
 		
 		if (!result["errorstatus"])
 			msgbox(_("The check was executed with success."))
