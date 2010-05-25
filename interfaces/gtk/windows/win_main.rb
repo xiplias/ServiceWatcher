@@ -97,7 +97,6 @@ class WinMain
 		end
 		
 		service = $objects.get("Service", sel[0])
-		
 		result = ServiceWatcher.check_and_report("pluginname" => service["plugin"], "service" => service)
 		
 		if (!result["errorstatus"])

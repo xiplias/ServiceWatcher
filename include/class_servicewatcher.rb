@@ -11,6 +11,8 @@ class ServiceWatcher
 			classob = ServiceWatcher.plugin_class(paras["pluginname"])
 			if classob.respond_to?("check")
 				staticmethod = true
+			else
+				paras["plugin"] = classob.new(paras["service"].details)
 			end
 		end
 		
