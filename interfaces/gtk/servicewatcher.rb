@@ -16,4 +16,4 @@ require("knj/gtk2_cb")
 require("knj/web")
 
 WinMain.new
-Gtk::main
+Gtk.main

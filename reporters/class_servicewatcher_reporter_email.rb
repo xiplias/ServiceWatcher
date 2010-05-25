@@ -59,10 +59,8 @@ class ServiceWatcherReporterEmail
 		#print "Report error: " + error_hash["error"].inspect
 		
 		require "knj/web"
-		
 		details = error_hash["reporter"].details
-		
-		html = _("An error occurred") + "\n\n" + error_hash["error"].inspect.to_s.html
+		html = _("An error occurred") + "<br />\n<br />\n" + Php.nl2br(error_hash["error"].inspect.to_s.html)
 		
 		if details["chessl"] == "1"
 			ssl = true

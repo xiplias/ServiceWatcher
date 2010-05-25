@@ -16,14 +16,14 @@ class WinServiceEdit
 		update_plugins
 		
 		if (@paras["service"])
-			@gui["txtName"].text = @paras["service"]["name"]
+			@gui["txtName"].text = @paras["service"].title
 			@gui["cbPlugin"].sel = @paras["service"]["plugin"]
 			
 			@paras["service"].details.each do |key, value|
 				if (!@form["objects"][key])
 					msgbox("Could not find: " + key)
 				else
-					Gtk2::form_setval(@form["objects"][key]["object"], value)
+					Gtk2.form_setval(@form["objects"][key]["object"], value)
 				end
 			end
 			
@@ -60,7 +60,7 @@ class WinServiceEdit
 		items = []
 		Dir.new("../../plugins").each do |file|
 			if (file.slice(0, 1) != ".")
-				items << file.slice(31..-4)
+				items << file[28..-4]
 			end
 		end
 		
@@ -84,14 +84,14 @@ class WinServiceEdit
 		sel = @gui["cbPlugin"].sel
 		text = sel["text"]
 		
-		paras = Kernel.const_get("KnjServiceCheckerPlugin" + Php::ucwords(text)).paras
+		paras = ServiceWatcher.plugin_class(Php.ucwords(text)).paras
 		
 		if (@form)
 			@gui["boxPluginDetails"].remove(@form["table"])
 			@form["table"].destroy
 		end
 		
-		@form = Gtk2::form(paras)
+		@form = Gtk2.form(paras)
 		@gui["boxPluginDetails"].add(@form["table"])
 		@form["table"].show_all
 	end
@@ -112,7 +112,7 @@ class WinServiceEdit
 		
 		service.del_details
 		@form["objects"].each do |name, datahash|
-			service.add_detail(name, Gtk2::form_getval(datahash["object"]))
+			service.add_detail(name, Gtk2.form_getval(datahash["object"]))
 		end
 		
 		if (@paras["win_main"])
@@ -141,7 +141,7 @@ class WinServiceEdit
 	end
 	
 	def on_addReporter_clicked
-		reporter = Gtk2::msgbox(
+		reporter = Gtk2.msgbox(
 			"type" => "list",
 			"items" => $objects.list("Reporter"),
 			"title" => _("Choose reporter")
@@ -153,7 +153,7 @@ class WinServiceEdit
 		
 		begin
 			link = $objects.add("Service_reporterlink", {
-				"reporter_id" => reporter["id"],
+				"reporter_id" => reporter.id,
 				"service_id" => @paras["service"].id
 			})
 		rescue Errors::Notice => e

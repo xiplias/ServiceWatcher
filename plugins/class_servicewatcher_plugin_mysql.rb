@@ -1,19 +1,16 @@
-class KnjServiceCheckerPluginMysql
+class ServiceWatcherPluginMysql
 	def self.paras
 		return [
 			{
-				"type" => "text",
 				"title" => _("Hostname"),
 				"name" => "txthost"
 			},
 			{
-				"type" => "text",
 				"title" => _("Port"),
 				"name" => "txtport",
 				"default" => "3306"
 			},
 			{
-				"type" => "text",
 				"title" => _("Username"),
 				"name" => "txtuser"
 			},
@@ -23,7 +20,6 @@ class KnjServiceCheckerPluginMysql
 				"name" => "txtpasswd"
 			},
 			{
-				"type" => "text",
 				"title" => _("Database"),
 				"name" => "txtdb",
 				"default" => "mysql"

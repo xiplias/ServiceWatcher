@@ -1,6 +1,7 @@
 class ServiceWatcher
 	def self.plugin_class(string)
-		object_name = "KnjServiceCheckerPlugin" + Php::ucwords(string)
+		print "Test: " + string + "\n"
+		object_name = "ServiceWatcherPlugin" + Php.ucwords(string)
 		return Kernel.const_get(object_name)
 	end
 	

@@ -1,29 +1,24 @@
-class KnjServiceCheckerPluginMail
+class ServiceWatcherPluginMail
 	def self.paras
 		return [
 			{
-				"type" => "text",
 				"title" => _("Host"),
 				"name" => "txthost"
 			},
 			{
-				"type" => "text",
 				"title" => _("Port"),
 				"name" => "txtport"
 			},
 			{
-				"type" => "select",
 				"title" => _("Type"),
 				"opts" => [_("POP"), _("IMAP"), _("SMTP")],
 				"name" => "seltype"
 			},
 			{
-				"type" => "check",
 				"title" => _("SSL"),
 				"name" => "chessl"
 			},
 			{
-				"type" => "text",
 				"title" => _("Username"),
 				"name" => "txtuser"
 			},

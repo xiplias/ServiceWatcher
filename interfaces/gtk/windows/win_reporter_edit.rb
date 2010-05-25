@@ -14,14 +14,14 @@ class WinReporterEdit
 		update_plugins
 		
 		if (@paras["reporter"])
-			@gui["txtName"].text = @paras["reporter"]["name"]
+			@gui["txtName"].text = @paras["reporter"].title
 			@gui["cbReporters"].sel = @paras["reporter"]["plugin"]
 			
 			@paras["reporter"].details.each do |key, value|
 				if (!@form["objects"][key])
 					msgbox("Could not find: " + key)
 				else
-					Gtk2::form_setval(@form["objects"][key]["object"], value)
+					Gtk2.form_setval(@form["objects"][key]["object"], value)
 				end
 			end
 		end
@@ -50,14 +50,14 @@ class WinReporterEdit
 		sel = @gui["cbReporters"].sel
 		text = sel["text"]
 		
-		paras = Kernel.const_get("ServiceWatcherReporter" + Php::ucwords(text)).paras
+		paras = Kernel.const_get("ServiceWatcherReporter" + Php.ucwords(text)).paras
 		
 		if (@form)
 			@gui["vboxPluginDetails"].remove(@form["table"])
 			@form["table"].destroy
 		end
 		
-		@form = Gtk2::form(paras)
+		@form = Gtk2.form(paras)
 		@gui["vboxPluginDetails"].pack_start(@form["table"])
 		@gui["vboxPluginDetails"].show_all
 	end
@@ -78,7 +78,7 @@ class WinReporterEdit
 		
 		reporter.del_details
 		@form["objects"].each do |key, objhash|
-			reporter.add_detail(key, Gtk2::form_getval(objhash["object"]))
+			reporter.add_detail(key, Gtk2.form_getval(objhash["object"]))
 		end
 		
 		if (@paras["win_service_edit"])

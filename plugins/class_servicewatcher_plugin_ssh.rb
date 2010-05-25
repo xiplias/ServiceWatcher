@@ -1,19 +1,16 @@
-class KnjServiceCheckerPluginSsh
+class ServiceWatcherPluginSsh
 	def self.paras
 		return [
 			{
-				"type" => "text",
 				"title" => _("Port"),
 				"name" => "txtport",
 				"default" => "22"
 			},
 			{
-				"type" => "text",
 				"title" => _("Hostname"),
 				"name" => "txthost"
 			},
 			{
-				"type" => "text",
 				"title" => _("Username"),
 				"name" => "txtuser"
 			},

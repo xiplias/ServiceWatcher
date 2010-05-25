@@ -1,4 +1,4 @@
-class KnjServiceCheckerPluginSsh_ftp
+class ServiceWatcherPluginSsh_ftp
 	def self.paras
 		return [
 			{

@@ -35,7 +35,7 @@ class WinMain
 	end
 	
 	def on_tvGroupServices_button_press_event(widget, event)
-		if (event.button == 3)
+		if event.button == 3
 			Gtk2::Menu.new("items" => [
 				[_("Add new"), [self, "on_addService_clicked"]],
 				[_("Edit service"), [self, "on_editService_clicked"]],
@@ -46,40 +46,38 @@ class WinMain
 	end
 	
 	def on_addService_clicked
-		if (!@tv_groups.sel)
+		if !@tv_groups.sel
 			msgbox(_("Please select a group and try again."))
 			return nil
 		end
 		
-		group = $objects.get("Group", @tv_groups.sel[0])
-		WinServiceEdit.new({"transient_for" => @window, "group" => group, "win_main" => self})
+		WinServiceEdit.new("transient_for" => @window, "group" => self.group, "win_main" => self)
 	end
 	
 	def on_editService_clicked
-		if (!@tv_groups.sel)
+		if !@tv_groups.sel
 			msgbox(_("Please select a group and try again."))
 			return nil
 		end
-		group = $objects.get("Group", @tv_groups.sel[0])
 		
 		sel = @tv_services.sel
-		if (!sel)
+		if !sel
 			msgbox(_("Please select a service and try again."))
 			return nil
 		end
 		
 		service = $objects.get("Service", sel[0])
-		WinServiceEdit.new({"transient_for" => @window, "service" => service, "group" => group, "win_main" => self})
+		WinServiceEdit.new("transient_for" => @window, "service" => service, "group" => self.group, "win_main" => self)
 	end
 	
 	def on_delService_clicked
 		sel = @tv_services.sel
-		if (!sel)
+		if !sel
 			msgbox(_("Please select a service and try again."))
 			return nil
 		end
 		
-		if (msgbox(_("Do you want to delete this service?"), "yesno") != "yes")
+		if msgbox(_("Do you want to delete this service?"), "yesno") != "yes"
 			return nil
 		end
 		
@@ -91,7 +89,7 @@ class WinMain
 	
 	def on_runService_clicked
 		sel = @tv_services.sel
-		if (!sel)
+		if !sel
 			msgbox(_("Please select a service and try again."))
 			return nil
 		end
@@ -99,7 +97,7 @@ class WinMain
 		service = $objects.get("Service", sel[0])
 		result = ServiceWatcher.check_and_report("pluginname" => service["plugin"], "service" => service)
 		
-		if (!result["errorstatus"])
+		if !result["errorstatus"]
 			msgbox(_("The check was executed with success."))
 		else
 			puts result["error"].inspect
@@ -113,10 +111,10 @@ class WinMain
 	
 	def update_groups(*paras)
 		@tv_groups.model.clear
+		@tv_groups.append(["", _("Add new")])
 		
-		q_groups = $db.select("groups")
-		while(d_groups = q_groups.fetch)
-			@tv_groups.append([d_groups["id"], d_groups["name"]])
+		$objects.list("Group").each do |group|
+			@tv_groups.append([group.id, group.title])
 		end
 	end
 	
@@ -124,13 +122,15 @@ class WinMain
 		@tv_services.model.clear
 		
 		sel = @tv_groups.sel
-		if (!sel)
+		if !sel
 			return nil
 		end
 		
-		group = $objects.get("Group", sel[0])
-		group.services.each do |service|
-			@tv_services.append([service["id"], service["name"]])
+		group = self.group("warn" => false)
+		if group
+			group.services.each do |service|
+				@tv_services.append([service.id, service.title])
+			end
 		end
 	end
 	
@@ -138,7 +138,7 @@ class WinMain
 		@tv_reporters.model.clear
 		
 		$objects.list("Reporter").each do |reporter|
-			@tv_reporters.append([reporter["id"], reporter["name"], reporter.reporter_plugin.class.to_s])
+			@tv_reporters.append([reporter.id, reporter.title, reporter.reporter_plugin.class.to_s])
 		end
 	end
 	
@@ -159,14 +159,14 @@ class WinMain
 	end
 	
 	def on_window_destroy
-		Gtk::main_quit
+		Gtk.main_quit
 	end
 	
 	def group(paras = {})
 		sel = @tv_groups.sel
 		
-		if !sel
-			if (!paras.has_key?("warn") or paras["warn"])
+		if !sel or sel[0] == ""
+			if !paras.has_key?("warn") or paras["warn"]
 				msgbox(_("Please select a group."))
 			end
 			
@@ -177,10 +177,10 @@ class WinMain
 	end
 	
 	def on_tvGroups_changed
-		sel = @tv_groups.sel
-		if sel
-			group = $db.single("groups", {"id" => sel[0]})
-			@gui["txtGroupName"].text = group["name"]
+		group = self.group("warn" => false)
+		
+		if group
+			@gui["txtGroupName"].text = group.title
 		else
 			@gui["txtGroupName"].text = ""
 		end
@@ -202,7 +202,7 @@ class WinMain
 			"name" => @gui["txtGroupName"].text
 		}
 		
-		if !self.group
+		if !self.group("warn" => false)
 			$objects.add("Group", save_hash)
 		else
 			self.group.update(save_hash)
@@ -260,7 +260,7 @@ class WinMain
 	end
 	
 	def on_addGroupReporter_clicked
-		reporter = Gtk2::msgbox(
+		reporter = Gtk2.msgbox(
 			"title" => _("Choose reporter"),
 			"type" => "list",
 			"items" => $objects.list("Reporter")
@@ -272,8 +272,8 @@ class WinMain
 		
 		begin
 			rlink = $objects.add("Group_reporterlink", {
-				"reporter_id" => reporter["id"],
-				"group_id" => self.group["id"]
+				"reporter_id" => reporter.id,
+				"group_id" => self.group.id
 			})
 		rescue Errors::Notice => e
 			msgbox(e.message)
