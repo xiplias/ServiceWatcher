@@ -7,6 +7,6 @@ list.each do |sysuser|
 	sw_db_path = sysuser["home"] + "/.servicewatcher/servicewatcher.sqlite3"
 	
 	if File.exists?(sw_db_path)
-		print %x[/usr/bin/sudo -u #{sysuser["nick"]} ruby /opt/servicewatcher/cron/cron_all.rb]
+		print %x[/usr/bin/sudo su #{sysuser["nick"]} -c "ruby /opt/servicewatcher/cron/cron_all.rb"]
 	end
 end

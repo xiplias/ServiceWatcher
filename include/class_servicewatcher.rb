@@ -1,12 +1,18 @@
 class ServiceWatcher
 	def self.plugin_class(string)
-		print "Test: " + string + "\n"
 		object_name = "ServiceWatcherPlugin" + Php.ucwords(string)
 		return Kernel.const_get(object_name)
 	end
 	
 	def self.check_and_report(paras)
 		staticmethod = false
+		
+		if paras.is_a?(Service)
+			paras = {
+				"service" => paras,
+				"pluginname" => paras["plugin"]
+			}
+		end
 		
 		if !paras["plugin"] and paras["pluginname"]
 			classob = ServiceWatcher.plugin_class(paras["pluginname"])

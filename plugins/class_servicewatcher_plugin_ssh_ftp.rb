@@ -54,7 +54,7 @@ class ServiceWatcherPluginSsh_ftp
 		
 		output = sshrobot.exec("/usr/bin/lftp #{Strings.unixsafe(paras["txtftphost"])} -p #{Strings.unixsafe(paras["txtftpport"])} -u #{Strings.unixsafe(paras["txtftpuser"])},#{Strings.unixsafe(paras["txtftppasswd"])} -d -e \"ls;quit\"")
 		
-		if !output.index("<--- 226 Transfer complete")
+		if !output.index("<--- 226 Transfer")
 			raise output
 		end
 	end
