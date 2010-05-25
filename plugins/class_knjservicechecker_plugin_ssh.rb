@@ -36,7 +36,7 @@ class KnjServiceCheckerPluginSsh
 				"port" => @paras["txtport"],
 				"user" => @paras["txtuser"],
 				"passwd" => @paras["txtpasswd"]
-			).getSession
+			).session
 		rescue => e
 			raise "SSH connection failed for #{@paras["txtuser"]}@#{@paras["txthost"]}:#{@paras["txtport"]}!"
 		end
