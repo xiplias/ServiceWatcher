@@ -1,6 +1,7 @@
 #!/usr/bin/ruby
 
-Dir.chdir(File.dirname(__FILE__))
+require "knj/autoload"
+Knj::Os.chdir_file(__FILE__)
 
 autoload :WinServiceEdit, "windows/win_service_edit"
 autoload :WinMain, "windows/win_main"
