@@ -51,7 +51,7 @@ class ServiceWatcherPluginMail
 			end
 			
 			conn.start(paras["txthost"], paras["txtuser"], paras["txtpass"]) do |smtp|
-				#nothing here.
+				#nothing here - but it is needed to raise error if failing.
 			end
 		end
 	end

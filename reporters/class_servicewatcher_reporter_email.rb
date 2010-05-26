@@ -62,6 +62,9 @@ class ServiceWatcherReporterEmail
 		details = error_hash["reporter"].details
 		html = "<h1>" + _("An error occurred") + "</h1><br />\n"
 		html += "<table><tr>"
+		html += "<td><b>#{_("Group")}</b></td>"
+		html += "<td>#{error_hash["service"].group.title.html}</td>"
+		html += "</tr><tr>"
 		html += "<td><b>#{_("Service")}</b></td>"
 		html += "<td>#{error_hash["service"].title}</td>"
 		html += "</tr><tr>"
