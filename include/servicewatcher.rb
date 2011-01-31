@@ -1,6 +1,6 @@
 #Some Mac-users have problems (Xiplias included). This saves them from a complete crash and following horrors - knj.
 begin
-	require "gettext"
+	GetText #autoloads - also fixes some bugs by doing it this way - knj.
 rescue LoadError
 	print "Notice: Could not load gettext-extension - using failover class.\n"
 	

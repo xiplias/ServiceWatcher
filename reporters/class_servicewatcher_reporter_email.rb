@@ -60,24 +60,27 @@ class ServiceWatcherReporterEmail
 		
 		require "knj/web"
 		details = error_hash["reporter"].details
+		
 		html = "<h1>" + _("An error occurred") + "</h1><br />\n"
 		html += "<table><tr>"
 		html += "<td><b>#{_("Group")}</b></td>"
 		html += "<td>#{error_hash["service"].group.title.html}</td>"
 		html += "</tr><tr>"
 		html += "<td><b>#{_("Service")}</b></td>"
-		html += "<td>#{error_hash["service"].title}</td>"
+		html += "<td>#{error_hash["service"].title.html}</td>"
 		html += "</tr><tr>"
 		html += "<td><b>#{_("Error")}</b></td>"
 		html += "<td>#{error_hash["error"].class.to_s.html}</td>"
 		html += "</tr><tr>"
 		html += "<td><b>#{_("Date")}</b></td>"
-		html += "<td>#{Datestamp.out(Time.now)}</td>"
+		html += "<td>#{Datestamp.out(Time.now).html}</td>"
 		html += "</tr><tr>"
 		html += "<td colspan=\"2\"><b>#{_("Error")}</b></td>"
 		html += "</tr><tr>"
 		html += "<td colspan=\"2\" style=\"margin-left: 9px;\">" + Php.nl2br(error_hash["error"].inspect.to_s.html) + "</td>"
 		html += "</tr></table>"
+		html += "<td colspan=\"2\"><b>#{_("Traceback")}</b></td>"
+		html += "<td colspan=\"2\" style=\"margin-left: 9px;\"></td>"
 		
 		if details["chessl"] == "1"
 			ssl = true

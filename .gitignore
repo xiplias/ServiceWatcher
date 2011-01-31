@@ -1,2 +1,3 @@
 .DS_Store
 .orin
+database/servicewatcher.sqlite3

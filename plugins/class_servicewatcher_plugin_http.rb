@@ -24,9 +24,10 @@ class ServiceWatcherPluginHttp
 	def self.check(paras)
 		http = Net::HTTP.new(paras["txthost"], paras["txtport"])
 		
-		if (paras["chessl"] == "1")
+		if paras["chessl"] == "1"
 			require "net/https"
 			http.use_ssl = true
+			http.verify_mode = OpenSSL::SSL::VERIFY_NONE
 		end
 		
 		resp, data = http.get2("/" + paras["txtaddr"])
